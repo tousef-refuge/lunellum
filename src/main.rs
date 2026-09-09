@@ -1,6 +1,8 @@
 mod cli;
 mod run;
 
+mod repo;
+
 use cli::Cli;
 use clap::Parser;
 use colored::Colorize;
