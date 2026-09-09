@@ -6,7 +6,9 @@ authors = ["tousef_refuge"]
 description = "A version control system built specifically for writers"
 
 [dependencies]
+anyhow = "1.0.104"
 clap = { version = "4.6.0", features = ["derive", "cargo"] }
+colored = "3.1.1"
 
 [features]
 debug = []
