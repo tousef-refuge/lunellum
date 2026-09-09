@@ -1,5 +1,6 @@
 use anyhow::{bail, Result};
 use std::path::{Path, PathBuf};
+use crate::cli::args::*;
 
 pub struct Repo {
     root: PathBuf,
@@ -24,5 +25,9 @@ impl Repo {
         let lll = root.join("lll");
 
         Ok(Self { root, lll })
+    }
+
+    pub fn init(&self, args: InitArgs) -> Result<()> {
+        Ok(())
     }
 }
