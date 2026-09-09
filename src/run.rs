@@ -1,5 +1,3 @@
-mod init;
-
 use anyhow::Result;
 use crate::cli::commands::Command;
 use crate::repo::Repo;
