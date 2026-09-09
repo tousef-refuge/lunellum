@@ -1,4 +1,7 @@
 target/
 */target/
-test/
 .idea/
+
+# Lunellum
+.lll/
+test/

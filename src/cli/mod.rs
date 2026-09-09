@@ -5,7 +5,7 @@ use clap::Parser;
 use commands::Command;
 
 #[derive(Parser)]
-#[command(author, version, about)]
+#[command(author, version, about, name = "lll")]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Command,
