@@ -1,4 +1,7 @@
+#![allow(unused_variables)]
+
 use anyhow::{bail, Result};
+use std::fs;
 use std::path::{Path, PathBuf};
 use crate::cli::args::*;
 
@@ -22,12 +25,24 @@ impl Repo {
             root = parent.to_path_buf();
         }
 
-        let lll = root.join("lll");
+        let lll = root.join(".lll");
 
         Ok(Self { root, lll })
     }
 
     pub fn init(&self, args: InitArgs) -> Result<()> {
+        let display_root = self.root
+            .to_string_lossy()
+            .strip_prefix(r"\\?\")
+            .unwrap_or(&self.root.to_string_lossy())
+            .to_string();
+
+        if self.lll.exists() {
+            bail!("A repository already exists on {}", display_root);
+        }
+
+        fs::create_dir_all(&self.lll)?;
+        println!("Created new repository on {}", display_root);
         Ok(())
     }
 }
