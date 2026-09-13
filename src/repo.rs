@@ -56,4 +56,8 @@ impl Repo {
         println!("Created new repository on {}", display_root);
         Ok(())
     }
+    
+    pub fn status(&self, args: StatusArgs) -> Result<()> {
+        Ok(())
+    }
 }
