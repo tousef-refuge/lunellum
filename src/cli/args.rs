@@ -2,6 +2,10 @@ use clap::Args;
 
 #[derive(Args)]
 pub struct CommitArgs {
+    // only adding this flag cause without it
+    // my muscle memory keeps getting fried lmao
+    /// Information about the commited changes
+    #[arg(short = 'm', long = "message")]
     pub info: String,
 }
 
