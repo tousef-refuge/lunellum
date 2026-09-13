@@ -1,10 +1,4 @@
 use std::cmp::Ordering;
-use std::path::PathBuf;
-
-pub struct FileInfo {
-    pub path: PathBuf,
-    pub data: String,
-}
 
 #[derive(Eq, PartialEq)]
 pub enum FileEdit {
