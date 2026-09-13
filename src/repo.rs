@@ -15,6 +15,7 @@ pub struct Repo {
 }
 
 impl Repo {
+    // self.__init__() sorta
     pub fn new(path: impl AsRef<Path>) -> Result<Self> {
         let mut root = match path.as_ref().canonicalize() {
             Ok(path) => path,
@@ -37,15 +38,10 @@ impl Repo {
         Ok(Self { root, lll, files, commits, head })
     }
 
+    // cli commands
     pub fn init(&self, args: InitArgs) -> Result<()> {
-        let display_root = self.root
-            .to_string_lossy()
-            .strip_prefix(r"\\?\")
-            .unwrap_or(&self.root.to_string_lossy())
-            .to_string();
-
         if self.lll.exists() {
-            bail!("A repository already exists on {}", display_root);
+            bail!("A repository already exists on {}", self.display_root());
         }
 
         fs::create_dir_all(&self.lll)?;
@@ -53,11 +49,28 @@ impl Repo {
         fs::create_dir_all(&self.commits)?;
         let head = fs::File::create(&self.head)?;
 
-        println!("Created new repository on {}", display_root);
+        println!("Created new repository on {}", self.display_root());
         Ok(())
     }
     
     pub fn status(&self, args: StatusArgs) -> Result<()> {
+        self.check_lll()?;
+        Ok(())
+    }
+
+    // util
+    fn display_root(&self) -> String {
+        self.root
+            .to_string_lossy()
+            .strip_prefix(r"\\?\")
+            .unwrap_or(&self.root.to_string_lossy())
+            .to_string()
+    }
+
+    fn check_lll(&self) -> Result<()> {
+        if !self.lll.exists() {
+            bail!("There is no repository on {}. Run `lll init` to make one", self.display_root());
+        }
         Ok(())
     }
 }
