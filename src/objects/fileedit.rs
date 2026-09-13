@@ -1,15 +1,9 @@
 use std::cmp::Ordering;
-use std::collections::BTreeSet;
 use std::path::PathBuf;
 
 pub struct FileInfo {
     pub path: PathBuf,
     pub data: String,
-}
-
-pub struct FileChange {
-    pub path: PathBuf,
-    pub edits: BTreeSet<FileEdit>,
 }
 
 #[derive(Eq, PartialEq)]
