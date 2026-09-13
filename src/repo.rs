@@ -2,11 +2,16 @@
 
 use anyhow::{bail, Result};
 use colored::Colorize;
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::time::{SystemTime, UNIX_EPOCH};
 use walkdir::WalkDir;
 
 use crate::cli::args::*;
+use crate::objects::commit::Commit;
+use crate::objects::file_edit::FileEdit;
+use crate::objects::myers_diff::myers_diff;
 
 pub struct Repo {
     root: PathBuf,
@@ -44,6 +49,27 @@ impl Repo {
     // cli commands
     pub fn commit(&self, args: CommitArgs) -> Result<()> {
         self.check_lll()?;
+
+        let changed_files = self.get_changed_files();
+        if changed_files.is_empty() {
+            println!("{}", "No files are changed".blue().bold());
+            return Ok(())
+        }
+
+        let mut changes: HashMap<PathBuf, Vec<FileEdit>> = HashMap::new();
+        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs() as i64;
+
+        for path in changed_files {
+            let file_path = self.files.join(&path);
+            let old_data = fs::read_to_string(&file_path).unwrap_or_else(|_| String::new()).into_bytes();
+            let new_data = fs::read_to_string(&self.root.join(&path))?.into_bytes();
+
+            let diff = myers_diff(&old_data, &new_data);
+            changes.insert(path, diff);
+        }
+
+        let commit = Commit { info: args.info, changes, timestamp };
+        println!("{:?}", commit); // TODO: store commits in files
 
         Ok(())
     }
@@ -112,7 +138,6 @@ impl Repo {
     }
 
     fn get_changed_files(&self) -> Vec<PathBuf> {
-        // TODO: make status checks actually work
         let paths = self.get_all_files();
         let mut changed_files = Vec::new();
         for path in paths {
