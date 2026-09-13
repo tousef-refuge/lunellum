@@ -2,6 +2,9 @@ target/
 */target/
 .idea/
 
+# Python
+.venv/
+
 # Lunellum
 .lll/
 test/
