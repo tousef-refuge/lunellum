@@ -4,14 +4,8 @@ use super::Serializable;
 
 #[derive(Deserialize, Serialize, Eq, PartialEq)]
 pub enum FileEdit {
-    Insert {
-        pos: usize,
-        data: String,
-    },
-    Delete {
-        pos: usize,
-        data: String,
-    },
+    Insert { pos: usize, data: Vec<u8>, },
+    Delete { pos: usize, data: Vec<u8>, },
 }
 
 impl FileEdit {

@@ -1,5 +1,5 @@
-pub mod fileedit;
 pub mod commit;
+pub mod file_edit;
 
 use anyhow::Result;
 use serde::{de::DeserializeOwned, Serialize};

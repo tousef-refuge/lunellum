@@ -1,14 +1,14 @@
-use std::collections::{BTreeSet, HashMap};
+use std::collections::HashMap;
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
-use super::fileedit::FileEdit;
+use super::file_edit::FileEdit;
 use super::Serializable;
 
 #[derive(Deserialize, Serialize)]
 pub struct Commit {
     pub info: String,
     pub timestamp: i64,
-    pub changes: HashMap<PathBuf, BTreeSet<FileEdit>>,
+    pub changes: HashMap<PathBuf, Vec<FileEdit>>,
 }
 
 impl Serializable for Commit {}
