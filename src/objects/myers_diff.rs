@@ -1,3 +1,15 @@
+// DO EDITS IN REVERSE ORDER
+// for edit in edits.iter().rev() {
+//     match edit {
+//         objects::file_edit::FileEdit::Insert { pos, data } => {
+//              result.splice(*pos..*pos, data.iter().copied());
+//         }
+//
+//         objects::file_edit::FileEdit::Delete { pos, data } => {
+//              result.drain(*pos..(*pos + data.len()));
+//         }
+//     }
+// }
 use super::file_edit::FileEdit;
 
 // "gun to your head tell me how this works" js slide it in dawg
@@ -28,7 +40,8 @@ pub fn myers_diff(a: &Vec<u8>, b: &Vec<u8>) -> Vec<FileEdit> {
             v[k_index] = x;
 
             if x >= n as isize && y >= m as isize {
-                return build_edits(&a, &b, &trace, d, offset);
+                trace.push(v.clone());
+                return build_edits(a, b, &trace, d, offset);
             }
         }
     }
@@ -37,16 +50,13 @@ pub fn myers_diff(a: &Vec<u8>, b: &Vec<u8>) -> Vec<FileEdit> {
 }
 
 fn build_edits(a: &[u8], b: &[u8], trace: &[Vec<isize>], d: usize, offset: isize) -> Vec<FileEdit> {
-    let mut edits = Vec::new();
-
     let mut x = a.len() as isize;
     let mut y = b.len() as isize;
 
     let mut raw = Vec::new();
 
     for depth in (1..=d).rev() {
-        let v = &trace[depth - 1];
-
+        let v = &trace[depth];
         let k = x - y;
         let prev_k = if k == -(depth as isize)
             || (k != depth as isize
@@ -61,65 +71,57 @@ fn build_edits(a: &[u8], b: &[u8], trace: &[Vec<isize>], d: usize, offset: isize
 
         if x == prev_x {
             y -= 1;
-
             raw.push(RawEdit::Insert {
                 pos: x as usize,
                 byte: b[y as usize],
             });
         } else {
             x -= 1;
-
             raw.push(RawEdit::Remove {
                 pos: x as usize,
                 byte: a[x as usize],
             });
         }
+
+        x = prev_x;
+        y = prev_y;
     }
 
     raw.reverse();
+    merge_edits(raw)
+}
 
+fn merge_edits(raw: Vec<RawEdit>) -> Vec<FileEdit> {
+    let mut edits = Vec::new();
     let mut i = 0;
     while i < raw.len() {
         match raw[i] {
             RawEdit::Insert { pos, .. } => {
                 let mut data = Vec::new();
-                let start = pos;
-
                 while i < raw.len() {
                     match raw[i] {
-                        RawEdit::Insert { pos: p, byte: byte } if p == start => {
+                        RawEdit::Insert { pos: p, byte } if p == pos => {
                             data.push(byte);
                             i += 1;
                         }
-
-                        RawEdit::Insert { pos: p, byte: byte } if p == start + data.len() => {
-                            data.push(byte);
-                            i += 1;
-                        }
-
                         _ => break,
                     }
                 }
-
-                edits.push(FileEdit::Insert { pos: start, data, });
+                edits.push(FileEdit::Insert { pos, data });
             }
-
             RawEdit::Remove { pos, .. } => {
                 let mut data = Vec::new();
-                let start = pos;
-
                 while i < raw.len() {
                     match raw[i] {
-                        RawEdit::Remove { pos: p, byte: byte } if p == start + data.len() => {
+                        RawEdit::Remove { pos: p, byte }
+                        if p == pos + data.len() => {
                             data.push(byte);
                             i += 1;
                         }
-
                         _ => break,
                     }
                 }
-
-                edits.push(FileEdit::Delete { pos: start, data, });
+                edits.push(FileEdit::Delete { pos, data });
             }
         }
     }
