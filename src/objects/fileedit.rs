@@ -1,6 +1,8 @@
 use std::cmp::Ordering;
+use serde::{Deserialize, Serialize};
+use super::Serializable;
 
-#[derive(Eq, PartialEq)]
+#[derive(Deserialize, Serialize, Eq, PartialEq)]
 pub enum FileEdit {
     Insert {
         pos: usize,
@@ -41,3 +43,5 @@ impl PartialOrd for FileEdit {
         Some(self.cmp(other))
     }
 }
+
+impl Serializable for FileEdit {}
