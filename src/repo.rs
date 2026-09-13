@@ -66,13 +66,10 @@ impl Repo {
         self.check_lll()?;
 
         // TODO: make status checks actually work
-        let paths = self.walk_root();
-        let mut changed_files = Vec::new();
-        for path in paths {
-            let file_path = self.files.join(&path);
-            if !file_path.exists() {
-                changed_files.push(path);
-            }
+        let changed_files = self.get_changed_files();
+        if changed_files.is_empty() {
+            println!("{}", "No files are changed".blue().bold());
+            return Ok(())
         }
 
         println!("{}", "Changed files:".blue().bold());
@@ -91,7 +88,7 @@ impl Repo {
         Ok(())
     }
 
-    fn walk_root(&self) -> Vec<PathBuf> {
+    fn get_all_files(&self) -> Vec<PathBuf> {
         let mut paths = Vec::new();
 
         // TODO: implement gitignore thingy here
@@ -112,6 +109,19 @@ impl Repo {
         }
 
         paths
+    }
+
+    fn get_changed_files(&self) -> Vec<PathBuf> {
+        // TODO: make status checks actually work
+        let paths = self.get_all_files();
+        let mut changed_files = Vec::new();
+        for path in paths {
+            let file_path = self.files.join(&path);
+            if !file_path.exists() {
+                changed_files.push(path);
+            }
+        }
+        changed_files
     }
 }
 
