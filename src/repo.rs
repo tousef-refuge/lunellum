@@ -91,7 +91,6 @@ impl Repo {
     pub fn status(&self, args: StatusArgs) -> Result<()> {
         self.check_lll()?;
 
-        // TODO: make status checks actually work
         let changed_files = self.get_changed_files();
         if changed_files.is_empty() {
             println!("{}", "No files are changed".blue().bold());
@@ -143,6 +142,13 @@ impl Repo {
         for path in paths {
             let file_path = self.files.join(&path);
             if !file_path.exists() {
+                changed_files.push(path);
+                continue
+            }
+
+            let old_data = fs::read_to_string(&file_path).unwrap();
+            let new_data = fs::read_to_string(&self.root.join(&path)).unwrap();
+            if old_data != new_data {
                 changed_files.push(path);
             }
         }
