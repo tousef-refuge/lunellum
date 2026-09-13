@@ -6,6 +6,7 @@ use crate::repo::Repo;
 pub fn run_command(command: Command) -> Result<()> {
     let repo = Repo::new(".")?;
     match command {
+        Command::Commit(args) => repo.commit(args),
         Command::Init(args) => repo.init(args),
         Command::Status(args) => repo.status(args),
         

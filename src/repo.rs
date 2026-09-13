@@ -42,6 +42,12 @@ impl Repo {
     }
 
     // cli commands
+    pub fn commit(&self, args: CommitArgs) -> Result<()> {
+        self.check_lll()?;
+
+        Ok(())
+    }
+
     pub fn init(&self, args: InitArgs) -> Result<()> {
         if self.lll.exists() {
             bail!("A repository already exists on {}", display_path(&self.root));
