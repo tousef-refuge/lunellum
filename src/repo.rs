@@ -12,6 +12,7 @@ use crate::cli::args::*;
 use crate::objects::commit::Commit;
 use crate::objects::file_edit::FileEdit;
 use crate::objects::myers_diff::myers_diff;
+use crate::objects::Serializable;
 
 pub struct Repo {
     root: PathBuf,
@@ -47,6 +48,7 @@ impl Repo {
     }
 
     // cli commands
+    // TODO: worry about how to process deleted files, better commit file names
     pub fn commit(&self, args: CommitArgs) -> Result<()> {
         self.check_lll()?;
 
@@ -57,19 +59,23 @@ impl Repo {
         }
 
         let mut changes: HashMap<PathBuf, Vec<FileEdit>> = HashMap::new();
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs() as i64;
+        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
 
         for path in changed_files {
             let file_path = self.files.join(&path);
-            let old_data = fs::read_to_string(&file_path).unwrap_or_else(|_| String::new()).into_bytes();
-            let new_data = fs::read_to_string(&self.root.join(&path))?.into_bytes();
+            let old_data = fs::read(&file_path).unwrap_or_default();
+            let new_data = fs::read(self.root.join(&path))?;
 
             let diff = myers_diff(&old_data, &new_data);
             changes.insert(path, diff);
+            // if the commit kills itself this might be a problem but eh
+            fs::write(&file_path, new_data)?;
         }
 
-        let commit = Commit { info: args.info, changes, timestamp };
-        println!("{:?}", commit); // TODO: store commits in files
+        let commit = Commit { info: args.info, changes };
+        fs::write(&self.commits.join(timestamp.to_string()), commit.serialize()?)?;
+        fs::write(&self.head, timestamp.to_string())?;
+        println!("{} {}", "Committed:".bold().green(), commit.info);
 
         Ok(())
     }
@@ -146,14 +152,28 @@ impl Repo {
                 continue
             }
 
-            let old_data = fs::read_to_string(&file_path).unwrap();
-            let new_data = fs::read_to_string(&self.root.join(&path)).unwrap();
+            let old_data = fs::read(&file_path).unwrap_or_default();
+            let new_data = fs::read(self.root.join(&path)).unwrap();
             if old_data != new_data {
                 changed_files.push(path);
             }
         }
         changed_files
     }
+
+    // fn get_latest_commit(&self) -> Option<PathBuf> {
+    //     // straight jenga
+    //     fs::read_dir(&self.commits)
+    //         .ok()?
+    //         .flatten()
+    //         .filter(|entry| entry.file_type().is_ok_and(|t| t.is_file()))
+    //         .filter_map(|entry| {
+    //             let timestamp = entry.file_name().to_str()?.parse::<i64>().ok()?;
+    //             Some((timestamp, entry.path()))
+    //         })
+    //         .max_by_key(|(timestamp, _)| *timestamp)
+    //         .map(|(_, path)| path)
+    // }
 }
 
 fn display_path(path: &PathBuf) -> String {
