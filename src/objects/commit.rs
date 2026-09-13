@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use super::file_edit::FileEdit;
 use super::Serializable;
 
-#[derive(Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Commit {
     pub info: String,
     pub timestamp: i64,

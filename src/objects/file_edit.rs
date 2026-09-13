@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use serde::{Deserialize, Serialize};
 use super::Serializable;
 
-#[derive(Deserialize, Serialize, Eq, PartialEq)]
+#[derive(Debug, Deserialize, Serialize, Eq, PartialEq)]
 pub enum FileEdit {
     Insert { pos: usize, data: Vec<u8>, },
     Delete { pos: usize, data: Vec<u8>, },
