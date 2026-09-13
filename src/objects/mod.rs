@@ -1,5 +1,6 @@
 pub mod commit;
 pub mod file_edit;
+pub mod myers_diff;
 
 use anyhow::Result;
 use serde::{de::DeserializeOwned, Serialize};
