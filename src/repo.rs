@@ -8,6 +8,10 @@ use crate::cli::args::*;
 pub struct Repo {
     root: PathBuf,
     lll: PathBuf,
+
+    files: PathBuf,
+    commits: PathBuf,
+    head: PathBuf,
 }
 
 impl Repo {
@@ -26,8 +30,11 @@ impl Repo {
         }
 
         let lll = root.join(".lll");
+        let files = lll.join("files");
+        let commits = lll.join("commits");
+        let head = lll.join("HEAD");
 
-        Ok(Self { root, lll })
+        Ok(Self { root, lll, files, commits, head })
     }
 
     pub fn init(&self, args: InitArgs) -> Result<()> {
@@ -42,6 +49,10 @@ impl Repo {
         }
 
         fs::create_dir_all(&self.lll)?;
+        fs::create_dir_all(&self.files)?;
+        fs::create_dir_all(&self.commits)?;
+        let head = fs::File::create(&self.head)?;
+
         println!("Created new repository on {}", display_root);
         Ok(())
     }
