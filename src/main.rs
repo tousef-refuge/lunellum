@@ -1,7 +1,8 @@
 mod cli;
-mod run;
+mod objects;
 
 mod repo;
+mod run;
 
 use cli::Cli;
 use clap::Parser;
