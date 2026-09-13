@@ -14,6 +14,9 @@ use super::file_edit::FileEdit;
 
 // "gun to your head tell me how this works" js slide it in dawg
 pub fn myers_diff(a: &Vec<u8>, b: &Vec<u8>) -> Vec<FileEdit> {
+    let a = if a.is_empty() { vec![32] } else { a.clone() };
+    let b = if b.is_empty() { vec![32] } else { b.clone() };
+
     let n = a.len();
     let m = b.len();
     let max = n + m;
@@ -41,7 +44,7 @@ pub fn myers_diff(a: &Vec<u8>, b: &Vec<u8>) -> Vec<FileEdit> {
 
             if x >= n as isize && y >= m as isize {
                 trace.push(v.clone());
-                return build_edits(a, b, &trace, d, offset);
+                return build_edits(&a, &b, &trace, d, offset);
             }
         }
     }
