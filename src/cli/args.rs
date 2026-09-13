@@ -2,7 +2,7 @@ use clap::Args;
 
 #[derive(Args)]
 pub struct CommitArgs {
-    info: String,
+    pub info: String,
 }
 
 #[derive(Args)]
