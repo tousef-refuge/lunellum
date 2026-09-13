@@ -11,11 +11,4 @@ pub struct Commit {
     pub changes: HashMap<PathBuf, BTreeSet<FileEdit>>,
 }
 
-#[derive(Deserialize, Serialize)]
-pub struct FileInfo {
-    pub path: PathBuf,
-    pub data: String,
-}
-
 impl Serializable for Commit {}
-impl Serializable for FileInfo {}
