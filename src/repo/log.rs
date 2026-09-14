@@ -22,7 +22,7 @@ impl Repo {
             let seconds = (timestamp / 1_000_000_000) as i64;
             let nanos = (timestamp % 1_000_000_000) as u32;
             let datetime = Local.timestamp_opt(seconds, nanos).unwrap();
-            println!("{} : {}", datetime.format("%a %b %d %H:%M:%S %Y").to_string().blue().bold(), commit.info);
+            println!("[{}] {} : {}", &commit.hash[..20], datetime.format("%a %b %d %H:%M:%S %Y").to_string().blue().bold(), commit.info);
         }
 
         Ok(())
