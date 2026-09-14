@@ -4,7 +4,8 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 use walkdir::WalkDir;
-
+use crate::crypto::Serializable;
+use crate::objects::commit::Commit;
 use crate::objects::file_edit::FileEditType;
 use crate::paths::{decompress_read, display_path};
 use super::Repo;
@@ -89,17 +90,16 @@ impl Repo {
         changed_files
     }
 
-    // pub fn get_latest_commit(&self) -> Option<PathBuf> {
-    //     // straight jenga
-    //     fs::read_dir(&self.commits)
-    //         .ok()?
-    //         .flatten()
-    //         .filter(|entry| entry.file_type().is_ok_and(|t| t.is_file()))
-    //         .filter_map(|entry| {
-    //             let timestamp = entry.file_name().to_str()?.parse::<i64>().ok()?;
-    //             Some((timestamp, entry.path()))
-    //         })
-    //         .max_by_key(|(timestamp, _)| *timestamp)
-    //         .map(|(_, path)| path)
-    // }
+    pub fn get_commits(&self) -> Result<Vec<Commit>> {
+        let mut commits = Vec::new();
+
+        for entry in fs::read_dir(&self.commits)? {
+            let commit_file = entry?.path();
+            let data = fs::read(commit_file)?;
+            let commit = Commit::deserialize(&data)?;
+            commits.push(commit);
+        }
+
+        Ok(commits)
+    }
 }
