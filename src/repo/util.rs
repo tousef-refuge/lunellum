@@ -1,7 +1,7 @@
 use anyhow::{bail, Result};
+use ignore::gitignore::GitignoreBuilder;
 use std::collections::HashMap;
 use std::fs;
-use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 use walkdir::WalkDir;
 
@@ -17,25 +17,15 @@ impl Repo {
         Ok(())
     }
 
-    pub fn get_lllinclude(&self) -> Result<Vec<String>> {
-        if !self.lllinclude.exists() {
-            return Ok(vec![]);
-        }
-
-        let mut include = Vec::new();
-        let lllinclude = fs::File::open(&self.lllinclude)?;
-        let reader = BufReader::new(lllinclude);
-        for line in reader.lines() {
-            include.push(line?);
-        }
-
-        Ok(include)
-    }
-
     pub fn get_all_files(&self) -> Vec<PathBuf> {
         let mut paths = Vec::new();
 
-        // TODO: implement gitignore thingy here
+        let mut builder = GitignoreBuilder::new(&self.root);
+        if self.lllinclude.is_file() {
+            builder.add(&self.lllinclude);
+        }
+        let lllinclude = builder.build().unwrap();
+
         for entry in WalkDir::new(&self.root)
             .into_iter()
             .filter_entry(|e| e.path() != &self.lll)
@@ -43,13 +33,19 @@ impl Repo {
             let path = entry.path();
             if path == self.root { continue; }
 
-            match path.strip_prefix(&self.root) {
-                Ok(relative_path) => {
-                    let path_buf: PathBuf = relative_path.to_path_buf();
-                    paths.push(path_buf);
-                }
+            let relative_path = match path.strip_prefix(&self.root) {
+                Ok(path) => path,
                 Err(_) => continue,
+            };
+
+            if lllinclude.matched(path, false).is_ignore() {
+                paths.push(relative_path.to_path_buf());
             }
+        }
+
+        // always include .lllinclude itself
+        if let Ok(relative_path) = self.lllinclude.strip_prefix(&self.root) {
+            paths.push(relative_path.to_path_buf());
         }
 
         paths
@@ -77,17 +73,16 @@ impl Repo {
             .filter_map(|e| e.ok()) {
             let path = entry.path();
 
-            match path.strip_prefix(&self.files) {
-                Ok(relative_path) => {
-                    let path_buf: PathBuf = relative_path.to_path_buf();
-                    let root_path = &self.root.join(&path_buf);
-                    if !root_path.exists() {
-                        changed_files.insert(path_buf, FileEditType::IsDeleted);
-                        continue
-                    }
-                }
-
+            let relative_path = match path.strip_prefix(&self.files) {
+                Ok(path) => path,
                 Err(_) => continue,
+            };
+
+            let path_buf: PathBuf = relative_path.to_path_buf();
+            let root_path = &self.root.join(&path_buf);
+            if !root_path.exists() {
+                changed_files.insert(path_buf, FileEditType::IsDeleted);
+                continue
             }
         }
 
