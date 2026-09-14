@@ -17,6 +17,12 @@ pub enum FileEditType {
     IsDeleted,
 }
 
+pub const FILE_EDIT_TYPE_ORDER: [FileEditType; 3] = [
+    FileEditType::IsEdited,
+    FileEditType::IsInserted,
+    FileEditType::IsDeleted,
+];
+
 impl FileEdit {
     fn pos(&self) -> usize {
         match self {

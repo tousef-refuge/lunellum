@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 use crate::cli::args::StatusArgs;
-use crate::objects::file_edit::FileEditType;
+use crate::objects::file_edit::{FileEditType, FILE_EDIT_TYPE_ORDER};
 use crate::paths::display_path;
 use super::Repo;
 
@@ -28,14 +28,20 @@ impl Repo {
             edit_types.get_mut(&edit_type).unwrap().push(path);
         }
 
-        for (edit_type, paths) in &edit_types {
+        for edit_type in FILE_EDIT_TYPE_ORDER {
             let title = match edit_type {
                 FileEditType::IsEdited => "Changed files:",
                 FileEditType::IsInserted => "New files:",
                 FileEditType::IsDeleted => "Deleted files:",
             };
+
+            let paths = &edit_types[&edit_type];
+            if paths.is_empty() { continue }
+
             println!("{}", title.blue().bold());
-            for path in paths { println!("   {}", display_path(&path)); }
+            for path in paths {
+                println!("   {}", display_path(path));
+            }
             println!();
         }
 
