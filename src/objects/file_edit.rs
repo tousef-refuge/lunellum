@@ -10,6 +10,12 @@ pub enum FileEdit {
     DeleteFile { data: Vec<u8> },
 }
 
+pub enum FileEditType {
+    IsEdited,
+    IsInserted,
+    IsDeleted,
+}
+
 impl FileEdit {
     fn pos(&self) -> usize {
         match self {
