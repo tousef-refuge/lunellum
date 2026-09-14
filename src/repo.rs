@@ -10,7 +10,7 @@ use walkdir::WalkDir;
 
 use crate::cli::args::*;
 use crate::objects::commit::Commit;
-use crate::objects::file_edit::FileEdit;
+use crate::objects::file_edit::{FileEdit, FileEditType};
 use crate::objects::myers_diff::myers_diff;
 use crate::objects::Serializable;
 
@@ -48,7 +48,7 @@ impl Repo {
     }
 
     // cli commands
-    // TODO: worry about how to process deleted files, better commit file names
+    // TODO: better commit file names
     pub fn commit(&self, args: CommitArgs) -> Result<()> {
         self.check_lll()?;
 
@@ -61,7 +61,7 @@ impl Repo {
         let mut changes: HashMap<PathBuf, Vec<FileEdit>> = HashMap::new();
         let timestamp = SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos();
 
-        for path in changed_files {
+        for (path, _) in changed_files {
             let file_path = self.files.join(&path);
             let old_data = fs::read(&file_path).unwrap_or_default();
             let new_data = fs::read(self.root.join(&path))?;
@@ -93,7 +93,8 @@ impl Repo {
         println!("Created new repository on {}", display_path(&self.root));
         Ok(())
     }
-    
+
+    // TODO: separate changed files from inserted files and deleted files
     pub fn status(&self, args: StatusArgs) -> Result<()> {
         self.check_lll()?;
 
@@ -104,7 +105,7 @@ impl Repo {
         }
 
         println!("{}", "Changed files:".blue().bold());
-        for path in changed_files {
+        for (path, _) in &changed_files {
             println!("   {}", display_path(&path));
         }
 
@@ -142,20 +143,21 @@ impl Repo {
         paths
     }
 
-    fn get_changed_files(&self) -> Vec<PathBuf> {
+    // TODO: actually check for deleted files
+    fn get_changed_files(&self) -> HashMap<PathBuf, FileEditType> {
         let paths = self.get_all_files();
-        let mut changed_files = Vec::new();
+        let mut changed_files : HashMap<PathBuf, FileEditType> = HashMap::new();
         for path in paths {
             let file_path = self.files.join(&path);
             if !file_path.exists() {
-                changed_files.push(path);
+                changed_files.insert(path, FileEditType::IsInserted);
                 continue
             }
 
             let old_data = fs::read(&file_path).unwrap_or_default();
             let new_data = fs::read(self.root.join(&path)).unwrap();
             if old_data != new_data {
-                changed_files.push(path);
+                changed_files.insert(path, FileEditType::IsEdited);
             }
         }
         changed_files
