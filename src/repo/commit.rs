@@ -26,17 +26,19 @@ impl Repo {
 
         // ngl i might kill this later if i ever feel like adding branches
         let commits = self.get_commits()?;
-        let latest = commits.iter()
-            .max_by_key(|commit| commit.timestamp)
-            .unwrap().timestamp;
+        if !commits.is_empty() {
+            let latest = commits.iter()
+                .max_by_key(|commit| commit.timestamp)
+                .unwrap().timestamp;
 
-        let current_head = fs::read_to_string(&self.head)
-            .ok()
-            .and_then(|s| s.trim().parse::<u128>().ok())
-            .unwrap_or(0);
+            let current_head = fs::read_to_string(&self.head)
+                .ok()
+                .and_then(|s| s.trim().parse::<u128>().ok())
+                .unwrap_or(0);
 
-        if latest != current_head {
-            bail!("Cannot run lll commit as you are currently not on the latest commit")
+            if latest != current_head {
+                bail!("Cannot run lll commit as you are currently not on the latest commit")
+            }
         }
 
         let mut changes: HashMap<PathBuf, Vec<FileEdit>> = HashMap::new();
