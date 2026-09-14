@@ -10,6 +10,7 @@ pub enum FileEdit {
     DeleteFile { data: Vec<u8> },
 }
 
+#[derive(Hash, Eq, PartialEq)]
 pub enum FileEditType {
     IsEdited,
     IsInserted,
