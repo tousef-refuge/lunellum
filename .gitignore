@@ -1,10 +1,14 @@
+# RustRover
+.idea/
+
+# Cargo
 target/
 */target/
-.idea/
 
 # Python
 .venv/
 
 # Lunellum
 .lll/
+.lllinclude
 test*/

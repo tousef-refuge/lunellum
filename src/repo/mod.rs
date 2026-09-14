@@ -9,6 +9,7 @@ use std::path::{Path, PathBuf};
 pub struct Repo {
     pub root: PathBuf,
     pub lll: PathBuf,
+    pub lllinclude: PathBuf,
 
     pub files: PathBuf,
     pub commits: PathBuf,
@@ -32,10 +33,11 @@ impl Repo {
         }
 
         let lll = root.join(".lll");
+        let lllinclude = root.join(".lllinclude");
         let files = lll.join("files");
         let commits = lll.join("commits");
         let head = lll.join("HEAD");
 
-        Ok(Self { root, lll, files, commits, head })
+        Ok(Self { root, lll, lllinclude, files, commits, head })
     }
 }

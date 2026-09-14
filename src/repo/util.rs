@@ -1,6 +1,7 @@
-use anyhow::bail;
+use anyhow::{bail, Result};
 use std::collections::HashMap;
 use std::fs;
+use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 use walkdir::WalkDir;
 
@@ -9,11 +10,26 @@ use crate::paths::{decompress_read, display_path};
 use super::Repo;
 
 impl Repo {
-    pub fn check_lll(&self) -> anyhow::Result<()> {
+    pub fn check_lll(&self) -> Result<()> {
         if !self.lll.exists() {
             bail!("There is no repository on {}. Run `lll init` to make one", display_path(&self.root));
         }
         Ok(())
+    }
+
+    pub fn get_lllinclude(&self) -> Result<Vec<String>> {
+        if !self.lllinclude.exists() {
+            return Ok(vec![]);
+        }
+
+        let mut include = Vec::new();
+        let lllinclude = fs::File::open(&self.lllinclude)?;
+        let reader = BufReader::new(lllinclude);
+        for line in reader.lines() {
+            include.push(line?);
+        }
+
+        Ok(include)
     }
 
     pub fn get_all_files(&self) -> Vec<PathBuf> {
