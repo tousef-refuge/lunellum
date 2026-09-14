@@ -8,6 +8,7 @@ pub fn run_command(command: Command) -> Result<()> {
     match command {
         Command::Commit(args) => repo.commit(args),
         Command::Init(args) => repo.init(args),
+        Command::Log(args) => repo.log(args),
         Command::Status(args) => repo.status(args),
         
         _ => unimplemented!(),

@@ -2,6 +2,7 @@ pub mod commit;
 pub mod init;
 pub mod status;
 pub mod util;
+pub mod log;
 
 use anyhow::{bail, Result};
 use std::path::{Path, PathBuf};

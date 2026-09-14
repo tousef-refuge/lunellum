@@ -9,6 +9,9 @@ pub enum Command {
     /// Create a new Lunellum repository
     Init(InitArgs),
     
+    /// Get a list of every commit so far
+    Log(LogArgs),
+    
     /// Show the status of the current branch
     Status(StatusArgs),
 }

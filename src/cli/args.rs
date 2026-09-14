@@ -13,4 +13,7 @@ pub struct CommitArgs {
 pub struct InitArgs {}
 
 #[derive(Args)]
+pub struct LogArgs {}
+
+#[derive(Args)]
 pub struct StatusArgs {}
