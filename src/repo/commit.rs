@@ -12,7 +12,6 @@ use crate::objects::Serializable;
 use super::Repo;
 
 impl Repo {
-    // cli commands
     // TODO: better commit file names
     pub fn commit(&self, args: CommitArgs) -> anyhow::Result<()> {
         self.check_lll()?;
@@ -35,19 +34,19 @@ impl Repo {
                 FileEditType::IsEdited => {
                     let diff = myers_diff(&old_data, &new_data);
                     changes.insert(path, diff);
+                    fs::write(&file_path, new_data)?;
                 }
 
                 FileEditType::IsInserted => {
                     changes.insert(path, vec![FileEdit::InsertFile { data : new_data.clone() }]);
+                    fs::write(&file_path, new_data)?;
                 }
 
                 FileEditType::IsDeleted => {
                     changes.insert(path, vec![FileEdit::DeleteFile { data : old_data.clone() }]);
+                    fs::remove_file(&file_path)?;
                 }
             }
-
-            // if the commit kills itself this might be a problem but eh
-            fs::write(&file_path, new_data)?;
         }
 
         let commit = Commit { info: args.info, changes };
