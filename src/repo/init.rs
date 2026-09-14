@@ -1,4 +1,4 @@
-use anyhow::bail;
+use anyhow::{bail, Result};
 use std::fs;
 
 use crate::cli::args::InitArgs;
@@ -7,10 +7,12 @@ use super::Repo;
 
 #[allow(unused_variables)]
 impl Repo {
-    pub fn init(&self, args: InitArgs) -> anyhow::Result<()> {
+    pub fn init(&self, args: InitArgs) -> Result<()> {
         if self.lll.exists() {
             bail!("A repository already exists on {}", display_path(&self.root));
         }
+
+        fs::write(&self.lllinclude, "*.txt")?;
 
         fs::create_dir_all(&self.lll)?;
         fs::create_dir_all(&self.files)?;
