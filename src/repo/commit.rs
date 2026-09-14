@@ -80,7 +80,8 @@ impl Repo {
             .map(|b| format!("{:02x}", b))
             .collect();
 
-        let commit = Commit { info: args.info, timestamp, changes };
+        // wait hold on why did timestamp not need clone???
+        let commit = Commit { info: args.info, hash: hash.clone(), timestamp, changes };
         fs::write(&self.commits.join(hash), commit.serialize()?)?;
         fs::write(&self.head, timestamp.to_string())?;
         println!("{} {}", "Committed:".bold().green(), commit.info);

@@ -7,6 +7,7 @@ use super::file_edit::FileEdit;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Commit {
     pub info: String,
+    pub hash: String,
     pub timestamp: u128,
     pub changes: HashMap<PathBuf, Vec<FileEdit>>,
 }
