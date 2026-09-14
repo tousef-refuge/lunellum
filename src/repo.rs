@@ -156,7 +156,6 @@ impl Repo {
         paths
     }
 
-    // TODO: actually check for deleted files
     fn get_changed_files(&self) -> HashMap<PathBuf, FileEditType> {
         let paths = self.get_all_files();
         let mut changed_files : HashMap<PathBuf, FileEditType> = HashMap::new();
@@ -173,6 +172,26 @@ impl Repo {
                 changed_files.insert(path, FileEditType::IsEdited);
             }
         }
+
+        for entry in WalkDir::new(&self.files)
+            .into_iter()
+            .filter_map(|e| e.ok()) {
+            let path = entry.path();
+
+            match path.strip_prefix(&self.files) {
+                Ok(relative_path) => {
+                    let path_buf: PathBuf = relative_path.to_path_buf();
+                    let root_path = &self.root.join(&path_buf);
+                    if !root_path.exists() {
+                        changed_files.insert(path_buf, FileEditType::IsDeleted);
+                        continue
+                    }
+                }
+
+                Err(_) => continue,
+            }
+        }
+
         changed_files
     }
 
