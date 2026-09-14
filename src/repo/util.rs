@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use walkdir::WalkDir;
 
 use crate::objects::file_edit::FileEditType;
-use crate::paths::display_path;
+use crate::paths::{decompress_read, display_path};
 use super::Repo;
 
 impl Repo {
@@ -49,7 +49,7 @@ impl Repo {
                 continue
             }
 
-            let old_data = fs::read(&file_path).unwrap_or_default();
+            let old_data = decompress_read(&file_path).unwrap();
             let new_data = fs::read(self.root.join(&path)).unwrap();
             if old_data != new_data {
                 changed_files.insert(path, FileEditType::IsEdited);

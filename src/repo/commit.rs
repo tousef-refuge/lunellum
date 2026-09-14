@@ -6,10 +6,11 @@ use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::cli::args::CommitArgs;
-use crate::crypto::Serializable;
+use crate::crypto::*;
 use crate::objects::commit::Commit;
 use crate::objects::file_edit::{FileEdit, FileEditType};
 use crate::objects::myers_diff::myers_diff;
+use crate::paths::decompress_read;
 use super::Repo;
 
 impl Repo {
@@ -27,22 +28,29 @@ impl Repo {
 
         for (path, edit_type) in changed_files {
             let file_path = self.files.join(&path);
-            let old_data = fs::read(&file_path).unwrap_or_default();
-            let new_data = fs::read(self.root.join(&path)).unwrap_or_default();
+            let old_data : Vec<u8>;
+            let new_data : Vec<u8>;
 
             match edit_type {
                 FileEditType::IsEdited => {
+                    old_data = decompress_read(&file_path)?;
+                    new_data = fs::read(self.root.join(&path))?;
+
                     let diff = myers_diff(&old_data, &new_data);
                     changes.insert(path, diff);
-                    fs::write(&file_path, new_data)?;
+                    fs::write(&file_path, compress(&new_data)?)?;
                 }
 
                 FileEditType::IsInserted => {
+                    new_data = fs::read(self.root.join(&path))?;
+
                     changes.insert(path, vec![FileEdit::InsertFile { data : new_data.clone() }]);
-                    fs::write(&file_path, new_data)?;
+                    fs::write(&file_path, compress(&new_data)?)?;
                 }
 
                 FileEditType::IsDeleted => {
+                    old_data = decompress_read(&file_path)?;
+
                     changes.insert(path, vec![FileEdit::DeleteFile { data : old_data.clone() }]);
                     fs::remove_file(&file_path)?;
                 }
