@@ -1,6 +1,6 @@
 use anyhow::{bail, Result};
 use ignore::gitignore::GitignoreBuilder;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::fs;
 use std::path::PathBuf;
 use walkdir::WalkDir;
@@ -23,7 +23,7 @@ impl Repo {
     pub fn check_head(&self) -> Result<()> {
         let commits = self.get_commits()?;
         if !commits.is_empty() {
-            let latest = commits.iter()
+            let latest = commits.values()
                 .max_by_key(|commit| commit.timestamp)
                 .unwrap().timestamp;
 
@@ -111,7 +111,7 @@ impl Repo {
         changed_files
     }
 
-    pub fn get_commits(&self) -> Result<Vec<Commit>> {
+    pub fn get_commits(&self) -> Result<BTreeMap<String, Commit>> {
         let mut commits = Vec::new();
 
         for entry in fs::read_dir(&self.commits)? {
@@ -121,6 +121,11 @@ impl Repo {
             commits.push(commit);
         }
 
-        Ok(commits)
+        // "hash map" that doesnt use a hash map how ironic
+        let commit_map: BTreeMap<String, Commit> = commits
+            .into_iter()
+            .map(|x| (x.hash.clone(), x))
+            .collect();
+        Ok(commit_map)
     }
 }

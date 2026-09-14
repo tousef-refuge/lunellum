@@ -4,6 +4,7 @@ use colored::Colorize;
 use std::cmp::Reverse;
 
 use crate::cli::args::LogArgs;
+use crate::objects::commit::Commit;
 use super::Repo;
 
 #[allow(unused_variables)]
@@ -11,7 +12,7 @@ impl Repo {
     pub fn log(&self, args: LogArgs) -> Result<()> {
         self.check_lll()?;
 
-        let mut commits = self.get_commits()?;
+        let mut commits : Vec<Commit> = self.get_commits()?.into_values().collect();
         commits.sort_by_key(|commit| Reverse(commit.timestamp));
         if commits.is_empty() {
             println!("{}", "No commits exist on this repository yet".blue().bold());
