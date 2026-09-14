@@ -2,8 +2,9 @@ mod cli;
 mod objects;
 mod repo;
 
-mod run;
+mod crypto;
 mod paths;
+mod run;
 
 use cli::Cli;
 use clap::Parser;

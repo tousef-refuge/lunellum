@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 use serde::{Deserialize, Serialize};
-use super::Serializable;
+use crate::crypto::Serializable;
 
 #[derive(Debug, Deserialize, Serialize, Eq, PartialEq)]
 pub enum FileEdit {

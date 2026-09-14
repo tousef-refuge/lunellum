@@ -6,10 +6,10 @@ use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::cli::args::CommitArgs;
+use crate::crypto::Serializable;
 use crate::objects::commit::Commit;
 use crate::objects::file_edit::{FileEdit, FileEditType};
 use crate::objects::myers_diff::myers_diff;
-use crate::objects::Serializable;
 use super::Repo;
 
 impl Repo {
