@@ -4,22 +4,28 @@ use super::Serializable;
 
 #[derive(Debug, Deserialize, Serialize, Eq, PartialEq)]
 pub enum FileEdit {
-    Insert { pos: usize, data: Vec<u8>, },
-    Delete { pos: usize, data: Vec<u8>, },
+    InsertData { pos: usize, data: Vec<u8>, },
+    DeleteData { pos: usize, data: Vec<u8>, },
+    InsertFile { data: Vec<u8> },
+    DeleteFile { data: Vec<u8> },
 }
 
 impl FileEdit {
     fn pos(&self) -> usize {
         match self {
-            Self::Insert { pos, .. } => *pos,
-            Self::Delete { pos, .. } => *pos,
+            Self::InsertData { pos, .. } => *pos,
+            Self::DeleteData { pos, .. } => *pos,
+            Self::InsertFile { .. } => 0,
+            Self::DeleteFile { .. } => 0,
         }
     }
 
     fn edit_type(&self) -> u8 {
         match self {
-            Self::Delete { .. } => 0,
-            Self::Insert { .. } => 1,
+            Self::DeleteFile { .. } => 0,
+            Self::DeleteData { .. } => 1,
+            Self::InsertFile { .. } => 2,
+            Self::InsertData { .. } => 3,
         }
     }
 }

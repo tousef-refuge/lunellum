@@ -80,7 +80,7 @@ fn build_edits(a: &[u8], b: &[u8], trace: &[Vec<isize>], d: usize, offset: isize
             });
         } else {
             x -= 1;
-            raw.push(RawEdit::Remove {
+            raw.push(RawEdit::Delete {
                 pos: x as usize,
                 byte: a[x as usize],
             });
@@ -110,13 +110,13 @@ fn merge_edits(raw: Vec<RawEdit>) -> Vec<FileEdit> {
                         _ => break,
                     }
                 }
-                edits.push(FileEdit::Insert { pos, data });
+                edits.push(FileEdit::InsertData { pos, data });
             }
-            RawEdit::Remove { pos, .. } => {
+            RawEdit::Delete { pos, .. } => {
                 let mut data = Vec::new();
                 while i < raw.len() {
                     match raw[i] {
-                        RawEdit::Remove { pos: p, byte }
+                        RawEdit::Delete { pos: p, byte }
                         if p == pos + data.len() => {
                             data.push(byte);
                             i += 1;
@@ -124,7 +124,7 @@ fn merge_edits(raw: Vec<RawEdit>) -> Vec<FileEdit> {
                         _ => break,
                     }
                 }
-                edits.push(FileEdit::Delete { pos, data });
+                edits.push(FileEdit::DeleteData { pos, data });
             }
         }
     }
@@ -136,5 +136,5 @@ fn merge_edits(raw: Vec<RawEdit>) -> Vec<FileEdit> {
 #[derive(Debug)]
 enum RawEdit {
     Insert { pos: usize, byte: u8 },
-    Remove { pos: usize, byte: u8 },
+    Delete { pos: usize, byte: u8 },
 }
