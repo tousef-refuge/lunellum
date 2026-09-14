@@ -1,4 +1,5 @@
 use colored::Colorize;
+use sha1::{Digest, Sha1};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
@@ -12,7 +13,6 @@ use crate::objects::Serializable;
 use super::Repo;
 
 impl Repo {
-    // TODO: better commit file names
     pub fn commit(&self, args: CommitArgs) -> anyhow::Result<()> {
         self.check_lll()?;
 
@@ -49,8 +49,15 @@ impl Repo {
             }
         }
 
-        let commit = Commit { info: args.info, changes };
-        fs::write(&self.commits.join(timestamp.to_string()), commit.serialize()?)?;
+        let mut hasher = Sha1::new();
+        hasher.update(timestamp.to_be_bytes());
+        let hash : String = hasher.finalize()
+            .iter()
+            .map(|b| format!("{:02x}", b))
+            .collect();
+
+        let commit = Commit { info: args.info, timestamp, changes };
+        fs::write(&self.commits.join(hash), commit.serialize()?)?;
         fs::write(&self.head, timestamp.to_string())?;
         println!("{} {}", "Committed:".bold().green(), commit.info);
 

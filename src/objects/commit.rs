@@ -7,6 +7,7 @@ use super::Serializable;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Commit {
     pub info: String,
+    pub timestamp: u128,
     pub changes: HashMap<PathBuf, Vec<FileEdit>>,
 }
 
