@@ -13,6 +13,7 @@ use crate::objects::commit::Commit;
 use crate::objects::file_edit::{FileEdit, FileEditType};
 use crate::objects::myers_diff::myers_diff;
 use crate::objects::Serializable;
+use crate::paths::display_path;
 
 pub struct Repo {
     root: PathBuf,
@@ -223,11 +224,4 @@ impl Repo {
     //         .max_by_key(|(timestamp, _)| *timestamp)
     //         .map(|(_, path)| path)
     // }
-}
-
-fn display_path(path: &PathBuf) -> String {
-    path.to_string_lossy()
-        .strip_prefix(r"\\?\")
-        .unwrap_or(&path.to_string_lossy())
-        .to_string()
 }

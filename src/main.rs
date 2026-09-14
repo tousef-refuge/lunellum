@@ -3,6 +3,7 @@ mod objects;
 
 mod repo;
 mod run;
+mod paths;
 
 use cli::Cli;
 use clap::Parser;
