@@ -1,3 +1,4 @@
+use anyhow::Result;
 use colored::Colorize;
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -9,8 +10,9 @@ use super::Repo;
 
 #[allow(unused_variables)]
 impl Repo {
-    pub fn status(&self, args: StatusArgs) -> anyhow::Result<()> {
+    pub fn status(&self, args: StatusArgs) -> Result<()> {
         self.check_lll()?;
+        self.check_head()?;
 
         let changed_files = self.get_changed_files();
         if changed_files.is_empty() {

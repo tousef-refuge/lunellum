@@ -17,6 +17,27 @@ impl Repo {
         }
         Ok(())
     }
+    
+    // checks if the head is on the latest commit
+    // might kill this later if branches are real
+    pub fn check_head(&self) -> Result<()> {
+        let commits = self.get_commits()?;
+        if !commits.is_empty() {
+            let latest = commits.iter()
+                .max_by_key(|commit| commit.timestamp)
+                .unwrap().timestamp;
+
+            let current_head = fs::read_to_string(&self.head)
+                .ok()
+                .and_then(|s| s.trim().parse::<u128>().ok())
+                .unwrap_or(0);
+
+            if latest != current_head {
+                bail!("Cannot run this command as you are currently not on the latest commit")
+            }
+        }
+        Ok(())
+    }
 
     pub fn get_all_files(&self) -> Vec<PathBuf> {
         let mut paths = Vec::new();
