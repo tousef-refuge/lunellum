@@ -14,8 +14,15 @@ use super::file_edit::FileEdit;
 
 // "gun to your head tell me how this works" js slide it in dawg
 pub fn myers_diff(a: &Vec<u8>, b: &Vec<u8>) -> Vec<FileEdit> {
-    let a = if a.is_empty() { vec![32] } else { a.clone() };
-    let b = if b.is_empty() { vec![32] } else { b.clone() };
+    // damn it was that simple
+    if a.is_empty() {
+        if b.is_empty() { return Vec::new(); }
+        return vec![FileEdit::InsertData { pos: 0, data: b.clone(), }];
+    }
+
+    if b.is_empty() {
+        return vec![FileEdit::DeleteData { pos: 0, data: a.clone(), }];
+    }
 
     let n = a.len();
     let m = b.len();
