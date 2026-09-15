@@ -128,4 +128,18 @@ impl Repo {
             .collect();
         Ok(commit_map)
     }
+
+    pub fn get_commit_from_hash(&self, hash: &str) -> Result<Commit> {
+        let commits = self.get_commits()?;
+
+        let mut matches = commits
+            .iter()
+            .filter(|(key, _)| key.starts_with(hash));
+
+        match (matches.next(), matches.next()) {
+            (None, _) => bail!("No commit found with a hash starting with {hash}"),
+            (Some((_, commit)), None) => Ok(commit.clone()),
+            (Some(_), Some(_)) => bail!("More than one commit found with a hash starting with {hash}"),
+        }
+    }
 }
