@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 use serde::{Deserialize, Serialize};
 use crate::crypto::Serializable;
 
-#[derive(Debug, Deserialize, Serialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
 pub enum FileEdit {
     InsertData { pos: usize, data: Vec<u8>, },
     DeleteData { pos: usize, data: Vec<u8>, },

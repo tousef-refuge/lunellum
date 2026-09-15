@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::crypto::Serializable;
 use super::file_edit::FileEdit;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Commit {
     pub info: String,
     pub hash: String,
