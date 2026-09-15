@@ -102,8 +102,8 @@ impl Repo {
             fs::write(final_path, data)?;
         }
 
-        // TODO: add proper println!
-        println!("{}", current.info);
+        fs::write(&self.head, current.timestamp.to_string())?;
+        println!("{} {} [{}]", "Currently viewing:".blue().bold(), current.info.bold(), &current.hash[..20]);
 
         Ok(())
     }
