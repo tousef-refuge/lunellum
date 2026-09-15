@@ -14,11 +14,16 @@ impl Repo {
         commits.sort_by_key(|commit| Reverse(commit.timestamp));
         if commits.is_empty() {
             println!("{}", "No commits exist on this repository yet".blue().bold());
+            return Ok(());
         }
 
-        let commit;
-
-        commit = self.get_commit_from_hash(&args.hash)?;
+        let commit : Commit;
+        if args.hash == "LATEST" {
+            commit = commits.first().unwrap().clone();
+        }
+        else {
+            commit = self.get_commit_from_hash(&args.hash)?;
+        }
         println!("{:?}", commit);
 
         Ok(())
