@@ -14,4 +14,7 @@ pub enum Command {
     
     /// Show the status of the current branch
     Status(StatusArgs),
+
+    /// View the file structure of a specific commit
+    View(ViewArgs),
 }

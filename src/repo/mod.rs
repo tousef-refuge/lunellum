@@ -1,8 +1,9 @@
 pub mod commit;
 pub mod init;
+pub mod log;
 pub mod status;
 pub mod util;
-pub mod log;
+pub mod view;
 
 use anyhow::{bail, Result};
 use std::path::{Path, PathBuf};

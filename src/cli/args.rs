@@ -17,3 +17,9 @@ pub struct LogArgs {}
 
 #[derive(Args)]
 pub struct StatusArgs {}
+
+#[derive(Args)]
+pub struct ViewArgs {
+    /// Hash of the given commit
+    pub hash: String,
+}
