@@ -29,7 +29,7 @@ impl Repo {
 
             let current_head = self.get_head();
             if latest != current_head {
-                bail!("Cannot run this command as you are currently not on the latest commit")
+                bail!("Cannot run this command as you are currently not on the latest commit. Run `lll view LATEST` and try again")
             }
         }
         Ok(())
