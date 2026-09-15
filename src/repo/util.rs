@@ -27,16 +27,19 @@ impl Repo {
                 .max_by_key(|commit| commit.timestamp)
                 .unwrap().timestamp;
 
-            let current_head = fs::read_to_string(&self.head)
-                .ok()
-                .and_then(|s| s.trim().parse::<u128>().ok())
-                .unwrap_or(0);
-
+            let current_head = self.get_head();
             if latest != current_head {
                 bail!("Cannot run this command as you are currently not on the latest commit")
             }
         }
         Ok(())
+    }
+
+    pub fn get_head(&self) -> u128 {
+        fs::read_to_string(&self.head)
+            .ok()
+            .and_then(|s| s.trim().parse::<u128>().ok())
+            .unwrap_or(0)
     }
 
     pub fn get_all_files(&self) -> Vec<PathBuf> {
