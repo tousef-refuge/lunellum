@@ -10,5 +10,5 @@ target/
 
 # Lunellum
 .lll/
-.lllinclude
+.lll*
 test*/
