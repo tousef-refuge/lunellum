@@ -1,4 +1,4 @@
-use ignore::gitignore::GitignoreBuilder;
+use ignore::gitignore::{Gitignore, GitignoreBuilder};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
@@ -12,17 +12,8 @@ impl Repo {
     pub fn get_all_files(&self) -> Vec<PathBuf> {
         let mut paths = Vec::new();
 
-        let mut builder = GitignoreBuilder::new(&self.root);
-        if self.lllinclude.is_file() {
-            builder.add(&self.lllinclude);
-        }
-        let lllinclude = builder.build().unwrap();
-
-        let mut builder = GitignoreBuilder::new(&self.root);
-        if self.lllignore.is_file() {
-            builder.add(&self.lllignore);
-        }
-        let lllignore = builder.build().unwrap();
+        let lllinclude = &self.build_gitignore(&self.lllinclude);
+        let lllignore = &self.build_gitignore(&self.lllignore);
 
         for entry in WalkDir::new(&self.root)
             .into_iter()
@@ -89,5 +80,13 @@ impl Repo {
         }
 
         changed_files
+    }
+
+    pub fn build_gitignore(&self, file : &PathBuf) -> Gitignore {
+        let mut builder = GitignoreBuilder::new(&self.root);
+        if file.is_file() {
+            builder.add(file);
+        }
+        builder.build().unwrap()
     }
 }
