@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::Result;
 use colored::Colorize;
 use std::collections::HashMap;
 use std::fs;
@@ -18,37 +18,7 @@ impl Repo {
         // find the right commit
         let mut commits : Vec<Commit> = self.get_commits()?.into_values().collect();
         commits.sort_by_key(|commit| commit.timestamp);
-        if commits.is_empty() {
-            println!("{}", "No commits exist on this repository yet".blue().bold());
-            return Ok(());
-        }
-
-        let current: Commit;
-        if args.hash == "LATEST" {
-            current = commits.last().unwrap().clone();
-        } else if let Some(offset) = get_head_offset(&args.hash) {
-            if offset == 0 {
-                bail!("What did you even achieve from doing that lmao")
-            }
-
-            let head_idx = commits.iter()
-                .position(|commit| commit.timestamp == self.get_head())
-                .unwrap() as i64;
-
-            let new_idx = head_idx + offset;
-            if new_idx < 0 {
-                bail!("Cannot view backwards that far (max: {})", head_idx)
-            }
-
-            let commit_count = commits.len() as i64;
-            if new_idx >= commit_count {
-                bail!("Cannot view forwards that far (max: {})", commit_count - head_idx - 1)
-            }
-
-            current = commits.get(new_idx as usize).unwrap().clone();
-        } else {
-            current = self.get_commit_from_hash(&args.hash)?;
-        }
+        let current = self.get_commit_from_hash(&args.hash)?;
 
         // store commit change data
         let mut files : HashMap<PathBuf, Vec<u8>> = HashMap::new();
@@ -126,20 +96,4 @@ impl Repo {
 
         Ok(())
     }
-}
-
-fn get_head_offset(s: &str) -> Option<i64> {
-    let (sign, num) = if let Some(num) = s.strip_prefix("HEAD+") {
-        (1, num)
-    } else if let Some(num) = s.strip_prefix("HEAD-") {
-        (-1, num)
-    } else {
-        return None;
-    };
-
-    if num.is_empty() || !num.chars().all(|c| c.is_ascii_digit()) {
-        return None;
-    }
-
-    num.parse::<i64>().ok().map(|n| sign * n)
 }
