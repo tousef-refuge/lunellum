@@ -13,6 +13,7 @@ impl Repo {
         }
 
         fs::write(&self.lllinclude, "*.txt")?;
+        fs::write(&self.lllignore, ".lllignore")?;
 
         fs::create_dir_all(&self.lll)?;
         fs::create_dir_all(&self.files)?;
