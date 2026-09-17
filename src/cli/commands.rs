@@ -12,6 +12,9 @@ pub enum Command {
     /// Get a list of every commit so far
     Log(LogArgs),
     
+    /// Reset the repository back to a given commit
+    Reset(ResetArgs),
+    
     /// Show the status of the current branch
     Status(StatusArgs),
 

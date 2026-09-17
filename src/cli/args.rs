@@ -16,6 +16,12 @@ pub struct InitArgs {}
 pub struct LogArgs {}
 
 #[derive(Args)]
+pub struct ResetArgs {
+    /// Hash of the given commit
+    pub hash: String,
+}
+
+#[derive(Args)]
 pub struct StatusArgs {}
 
 #[derive(Args)]
