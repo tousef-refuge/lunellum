@@ -38,10 +38,6 @@ impl Repo {
         }
 
         if let Some(offset) = get_head_offset(hash) {
-            if offset == 0 {
-                bail!("What did you even achieve from doing that lmao")
-            }
-
             let head_idx = commits.iter()
                 .position(|commit| commit.timestamp == self.get_head())
                 .unwrap() as i64;
