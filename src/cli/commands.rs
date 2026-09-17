@@ -6,6 +6,9 @@ pub enum Command {
     /// Record changes to the repository
     Commit(CommitArgs),
 
+    /// Get a list of changes of a given commit
+    Details(DetailsArgs),
+
     /// Create a new Lunellum repository
     Init(InitArgs),
     

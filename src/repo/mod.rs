@@ -5,6 +5,7 @@ pub mod status;
 pub mod util;
 pub mod view;
 pub mod reset;
+pub mod details;
 
 use anyhow::{bail, Result};
 use std::path::{Path, PathBuf};

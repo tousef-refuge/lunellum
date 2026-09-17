@@ -10,6 +10,13 @@ pub struct CommitArgs {
 }
 
 #[derive(Args)]
+pub struct DetailsArgs {
+    /// Hash of the given commit
+    #[arg(default_value = "HEAD-0")]
+    pub hash: String,
+}
+
+#[derive(Args)]
 pub struct InitArgs {}
 
 #[derive(Args)]
