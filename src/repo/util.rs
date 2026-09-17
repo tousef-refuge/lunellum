@@ -52,6 +52,12 @@ impl Repo {
         }
         let lllinclude = builder.build().unwrap();
 
+        let mut builder = GitignoreBuilder::new(&self.root);
+        if self.lllignore.is_file() {
+            builder.add(&self.lllignore);
+        }
+        let lllignore = builder.build().unwrap();
+
         for entry in WalkDir::new(&self.root)
             .into_iter()
             .filter_entry(|e| e.path() != &self.lll)
@@ -63,6 +69,10 @@ impl Repo {
                 Ok(path) => path,
                 Err(_) => continue,
             };
+
+            if lllignore.matched(path, false).is_ignore() {
+                continue;
+            }
 
             if lllinclude.matched(path, false).is_ignore() {
                 paths.push(relative_path.to_path_buf());
