@@ -1,5 +1,6 @@
 use anyhow::Result;
 use colored::Colorize;
+use ignore::gitignore::GitignoreBuilder;
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
@@ -61,12 +62,22 @@ impl Repo {
         }
 
         // actually write and delete the necessary files
+        let mut builder = GitignoreBuilder::new(&self.root);
+        if self.lllignore.is_file() {
+            builder.add(&self.lllignore);
+        }
+        let lllignore = builder.build()?;
+
         for entry in WalkDir::new(&self.root)
             .into_iter()
             .filter_map(|e| e.ok())
         {
             let path = entry.path();
             if !path.is_file() {
+                continue;
+            }
+
+            if lllignore.matched(path, false).is_ignore() {
                 continue;
             }
 
