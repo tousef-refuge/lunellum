@@ -52,11 +52,17 @@ impl Repo {
 
         // TODO: make this part not look horrendous
         for path in seen_paths {
+            // let old_exists = old_files.contains_key(&path);
+            // let new_exists = new_files.contains_key(&path);
+
             let old_data = old_files.get(&path).cloned().unwrap_or_default();
             let new_data = new_files.get(&path).cloned().unwrap_or_default();
 
-            println!("{}", display_path(&path));
+            println!("\n{} {} :", "*".bold(), display_path(&path).bold());
+            println!("{}", "BEFORE:".blue().bold());
             println!("{}", String::from_utf8_lossy(&old_data).to_string());
+
+            println!("{}", "\nAFTER:".blue().bold());
             println!("{}", String::from_utf8_lossy(&new_data).to_string());
         }
         
