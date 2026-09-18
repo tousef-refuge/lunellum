@@ -4,7 +4,8 @@ use std::fs;
 use std::path::PathBuf;
 use walkdir::WalkDir;
 
-use crate::objects::file_edit::FileEditType;
+use crate::objects::commit::Commit;
+use crate::objects::file_edit::{FileEdit, FileEditType};
 use crate::paths::decompress_read;
 use super::Repo;
 
@@ -80,6 +81,52 @@ impl Repo {
         }
 
         changed_files
+    }
+    
+    pub fn build_files(&self, current : &Commit) -> HashMap<PathBuf, Vec<u8>> {
+        let mut commits : Vec<Commit> = self.get_commits().unwrap().into_values().collect();
+        commits.sort_by_key(|commit| commit.timestamp);
+
+        let mut files : HashMap<PathBuf, Vec<u8>> = HashMap::new();
+        let mut stop = false;
+        for commit in commits {
+            if stop { break }
+            stop = commit.hash == current.hash;
+
+            let changes = commit.changes;
+            for (path, edits) in changes {
+                let mut new_data = Vec::new();
+                let mut deletefile = false;
+
+                for edit in edits.iter().rev() {
+                    match edit {
+                        FileEdit::InsertData { pos, data } => {
+                            new_data.splice(*pos..*pos, data.iter().copied());
+                        }
+
+                        FileEdit::DeleteData { pos, data } => {
+                            new_data.drain(*pos..(*pos + data.len()));
+                        }
+
+                        FileEdit::InsertFile { data } => {
+                            new_data = data.clone();
+                        }
+
+                        FileEdit::DeleteFile { .. } => {
+                            deletefile = true;
+                        }
+                    }
+                }
+
+                if deletefile {
+                    files.remove(&path);
+                } else {
+                    files.insert(path, new_data);
+                }
+            }
+        }
+        
+        files
     }
 
     pub fn build_gitignore(&self, file : &PathBuf) -> Gitignore {

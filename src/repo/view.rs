@@ -1,13 +1,10 @@
 use anyhow::Result;
 use colored::Colorize;
-use std::collections::HashMap;
 use std::fs;
-use std::path::PathBuf;
 use walkdir::WalkDir;
 
 use crate::cli::args::ViewArgs;
 use crate::objects::commit::Commit;
-use crate::objects::file_edit::FileEdit;
 use super::Repo;
 
 // MISERY
@@ -20,45 +17,8 @@ impl Repo {
         commits.sort_by_key(|commit| commit.timestamp);
         let current = self.get_commit_from_hash(&args.hash)?;
 
-        // store commit change data
-        let mut files : HashMap<PathBuf, Vec<u8>> = HashMap::new();
-        let mut stop = false;
-        for commit in commits {
-            if stop { break }
-            stop = commit.hash == current.hash;
-
-            let changes = commit.changes;
-            for (path, edits) in changes {
-                let mut new_data = Vec::new();
-                let mut deletefile = false;
-
-                for edit in edits.iter().rev() {
-                    match edit {
-                        FileEdit::InsertData { pos, data } => {
-                            new_data.splice(*pos..*pos, data.iter().copied());
-                        }
-
-                        FileEdit::DeleteData { pos, data } => {
-                            new_data.drain(*pos..(*pos + data.len()));
-                        }
-
-                        FileEdit::InsertFile { data } => {
-                            new_data = data.clone();
-                        }
-
-                        FileEdit::DeleteFile { .. } => {
-                            deletefile = true;
-                        }
-                    }
-                }
-
-                if deletefile {
-                    files.remove(&path);
-                } else {
-                    files.insert(path, new_data);
-                }
-            }
-        }
+        // get commit change data
+        let files = self.build_files(&current);
 
         // actually write and delete the necessary files
         let lllignore = &self.build_gitignore(&self.lllignore);
