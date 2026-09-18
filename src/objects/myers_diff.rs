@@ -1,15 +1,5 @@
 // DO EDITS IN REVERSE ORDER
-// for edit in edits.iter().rev() {
-//     match edit {
-//         objects::file_edit::FileEdit::Insert { pos, data } => {
-//              result.splice(*pos..*pos, data.iter().copied());
-//         }
-//
-//         objects::file_edit::FileEdit::Delete { pos, data } => {
-//              result.drain(*pos..(*pos + data.len()));
-//         }
-//     }
-// }
+use crate::crypto::is_binary;
 use super::file_edit::FileEdit;
 
 // "gun to your head tell me how this works" js slide it in dawg
@@ -22,6 +12,12 @@ pub fn myers_diff(a: &Vec<u8>, b: &Vec<u8>) -> Vec<FileEdit> {
 
     if b.is_empty() {
         return vec![FileEdit::DeleteData { pos: 0, data: a.clone(), }];
+    }
+
+    // as much as i dont wanna do it this makes binary files
+    // not tweak out from myers_diff, maybe ill change it later
+    if is_binary(a) || is_binary(b) {
+        return vec![FileEdit::InsertFile { data: b.clone(), }];
     }
 
     let n = a.len();

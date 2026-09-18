@@ -25,3 +25,7 @@ pub fn decompress(data: &[u8]) -> Result<Vec<u8>> {
     decoder.read_to_end(&mut output)?;
     Ok(output)
 }
+
+pub fn is_binary(data: &[u8]) -> bool {
+    data.contains(&0)
+}
