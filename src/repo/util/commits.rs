@@ -34,7 +34,9 @@ impl Repo {
         }
 
         if hash == "LATEST" {
-            return Ok(commits.last().unwrap().clone())
+            let mut sorted = commits.clone();
+            sorted.sort_by_key(|commit| commit.timestamp);
+            return Ok(sorted.last().unwrap().clone())
         }
 
         if let Some(offset) = get_head_offset(hash) {
