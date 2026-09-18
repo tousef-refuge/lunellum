@@ -95,7 +95,7 @@ impl Repo {
 
             let changes = commit.changes;
             for (path, edits) in changes {
-                let mut new_data = Vec::new();
+                let mut new_data = files.get(&path).unwrap_or(&Vec::new()).to_vec();
                 let mut deletefile = false;
 
                 for edit in edits.iter().rev() {
