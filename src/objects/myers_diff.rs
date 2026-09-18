@@ -14,10 +14,10 @@ pub fn myers_diff(a: &Vec<u8>, b: &Vec<u8>) -> Vec<FileEdit> {
         return vec![FileEdit::DeleteData { pos: 0, data: a.clone(), }];
     }
 
-    // as much as i dont wanna do it this makes binary files
-    // not tweak out from myers_diff, maybe ill change it later
+    // okay wow im stupid
     if is_binary(a) || is_binary(b) {
-        return vec![FileEdit::InsertFile { data: b.clone(), }];
+        return vec![FileEdit::DeleteData { pos: 0, data: a.clone(), },
+                    FileEdit::InsertData { pos: a.len(), data: b.clone(), }];
     }
 
     let n = a.len();
