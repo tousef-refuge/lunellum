@@ -3,11 +3,13 @@ use colored::Colorize;
 use std::path::PathBuf;
 
 use crate::cli::args::DetailsArgs;
+use crate::crypto::is_binary;
 use crate::objects::file_edit::FileEdit;
 use crate::paths::display_path;
 use super::Repo;
 
 impl Repo {
+    //noinspection DuplicatedCode
     pub fn details(&self, args: DetailsArgs) -> Result<()> {
         self.check_lll()?;
         let current = self.get_commit_from_hash(&args.hash)?;
@@ -20,10 +22,10 @@ impl Repo {
         // Heh. To me, this is just regular file building.
         for (path, edits) in current.changes {
             seen_paths.push(path.clone());
-            let mut old_data = old_files.get(&path).cloned().unwrap_or_default();
+            let mut old_data = old_files.get(&path).unwrap_or(&Vec::new()).to_vec();
             let mut deletefile = false;
 
-            for edit in edits.iter().rev() {
+            for edit in edits.iter() {
                 match edit {
                     FileEdit::InsertData { pos, data } => {
                         old_data.drain(*pos..(*pos + data.len()));
@@ -52,20 +54,39 @@ impl Repo {
 
         // TODO: make this part not look horrendous
         for path in seen_paths {
-            // let old_exists = old_files.contains_key(&path);
-            // let new_exists = new_files.contains_key(&path);
+            let old_exists = old_files.contains_key(&path);
+            let new_exists = new_files.contains_key(&path);
 
             let old_data = old_files.get(&path).cloned().unwrap_or_default();
             let new_data = new_files.get(&path).cloned().unwrap_or_default();
 
             println!("\n{} {} :", "*".bold(), display_path(&path).bold());
-            println!("{}", "BEFORE:".blue().bold());
-            println!("{}", String::from_utf8_lossy(&old_data).to_string());
 
-            println!("{}", "\nAFTER:".blue().bold());
-            println!("{}", String::from_utf8_lossy(&new_data).to_string());
+            if old_exists {
+                println!("{}", "BEFORE:".blue().bold());
+                print_data(&old_data);
+            } else {
+                println!("{}", "BEFORE:".blue().bold());
+                println!("{}", "File does not exist yet".yellow());
+            }
+
+            if new_exists {
+                println!("{}", "\nAFTER:".blue().bold());
+                print_data(&new_data);
+            } else {
+                println!("{}", "\nAFTER:".blue().bold());
+                println!("{}", "File does not exist anymore".yellow());
+            }
         }
         
         Ok(())
+    }
+}
+
+fn print_data(data : &[u8]) {
+    if is_binary(data) {
+        println!("{}", "Binary file".yellow());
+    } else {
+        println!("{}", String::from_utf8_lossy(data).to_string());
     }
 }
