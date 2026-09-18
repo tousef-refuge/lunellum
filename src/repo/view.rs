@@ -4,7 +4,6 @@ use std::fs;
 use walkdir::WalkDir;
 
 use crate::cli::args::ViewArgs;
-use crate::objects::commit::Commit;
 use super::Repo;
 
 // MISERY
@@ -12,17 +11,11 @@ impl Repo {
     pub fn view(&self, args: ViewArgs) -> Result<()> {
         self.check_lll()?;
 
-        // find the right commit
-        let mut commits : Vec<Commit> = self.get_commits()?.into_values().collect();
-        commits.sort_by_key(|commit| commit.timestamp);
         let current = self.get_commit_from_hash(&args.hash)?;
-
-        // get commit change data
         let files = self.build_files(&current);
-
-        // actually write and delete the necessary files
         let lllignore = &self.build_gitignore(&self.lllignore);
 
+        // the magic
         for entry in WalkDir::new(&self.root)
             .into_iter()
             .filter_map(|e| e.ok())
