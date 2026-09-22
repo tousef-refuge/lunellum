@@ -52,7 +52,6 @@ impl Repo {
             }
         }
 
-        // TODO: make this part not look horrendous
         for path in seen_paths {
             let old_exists = old_files.contains_key(&path);
             let new_exists = new_files.contains_key(&path);
