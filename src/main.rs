@@ -5,6 +5,7 @@ mod repo;
 mod crypto;
 mod paths;
 mod run;
+mod vcs;
 
 use cli::Cli;
 use clap::Parser;
