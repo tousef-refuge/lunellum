@@ -1,6 +1,7 @@
 use anyhow::Result;
 use crate::cli::commands::Command;
 use crate::repo::Repo;
+use crate::vcs::update_bin;
 
 #[allow(unreachable_patterns)]
 pub fn run_command(command: Command) -> Result<()> {
@@ -13,6 +14,8 @@ pub fn run_command(command: Command) -> Result<()> {
         Command::Reset(args) => repo.reset(args),
         Command::Status(args) => repo.status(args),
         Command::View(args) => repo.view(args),
+        
+        Command::Update => update_bin(),
         
         _ => unimplemented!(),
     }

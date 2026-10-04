@@ -23,4 +23,7 @@ pub enum Command {
 
     /// View the file structure of a specific commit
     View(ViewArgs),
+
+    /// Update Lunellum
+    Update,
 }
