@@ -5,10 +5,14 @@
 target/
 */target/
 
+# Env
+.env
+
 # Python
 .venv/
 
 # Lunellum
 .lll/
 .lll*
+lll*
 test*/
