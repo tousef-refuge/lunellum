@@ -16,3 +16,7 @@ target/
 .lll*
 lll*
 test*/
+
+# Documentation
+!docs/
+!docs/**
