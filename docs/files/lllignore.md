@@ -13,5 +13,9 @@ to prevent it from being deleted by other commands. You can remove this if
 you want however I do not recommend it, as it may cause unexpected behavior
 if accidentally deleted.
 
+The .lllinclude file is the only file that does not get affected by
+.lllignore. It will always be included for other commands no matter what
+to prevent unpredictable behavior.
+
 In most commands, .lllignore takes priority over .lllinclude, so if a file
 matches the patterns in both these files, it will be ignored.
