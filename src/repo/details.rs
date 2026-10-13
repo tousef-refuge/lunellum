@@ -63,7 +63,7 @@ impl Repo {
 
             if old_exists {
                 println!("{}", "BEFORE:".blue().bold());
-                print_data(&old_data);
+                print_data(&old_data, &args);
             } else {
                 println!("{}", "BEFORE:".blue().bold());
                 println!("{}", "File does not exist yet".yellow());
@@ -71,7 +71,7 @@ impl Repo {
 
             if new_exists {
                 println!("{}", "\nAFTER:".blue().bold());
-                print_data(&new_data);
+                print_data(&new_data, &args);
             } else {
                 println!("{}", "\nAFTER:".blue().bold());
                 println!("{}", "File does not exist anymore".yellow());
@@ -82,7 +82,12 @@ impl Repo {
     }
 }
 
-fn print_data(data : &[u8]) {
+fn print_data(data: &[u8], args: &DetailsArgs) {
+    if args.raw {
+        println!("{}", String::from_utf8_lossy(data).to_string());
+        return;
+    }
+
     if is_binary(data) {
         println!("{}", "Binary file".yellow());
     } else {

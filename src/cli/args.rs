@@ -14,6 +14,10 @@ pub struct DetailsArgs {
     /// Hash of the given commit
     #[arg(default_value = "HEAD-0")]
     pub hash: String,
+    
+    /// Print data exactly as it is in the file
+    #[arg(short = 'm', long = "raw")]
+    pub raw: bool,
 }
 
 #[derive(Args)]
