@@ -85,6 +85,6 @@ impl Repo {
     }
 }
 
-fn tag_str(name: &str) -> String {
+pub fn tag_str(name: &str) -> String {
     format!("\"{}\"", name)
 }
