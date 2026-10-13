@@ -1,6 +1,7 @@
 use clap::Args;
 
 #[derive(Args)]
+#[group(required = true, multiple = false)]
 pub struct CommitArgs {
     // only adding this flag cause without it
     // my muscle memory keeps getting fried lmao
