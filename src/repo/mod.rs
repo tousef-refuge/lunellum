@@ -20,6 +20,7 @@ pub struct Repo {
 
     pub files: PathBuf,
     pub commits: PathBuf,
+    pub tags: PathBuf,
     pub head: PathBuf,
 }
 
@@ -46,8 +47,9 @@ impl Repo {
         
         let files = lll.join("files");
         let commits = lll.join("commits");
+        let tags = lll.join("tags");
         let head = lll.join("HEAD");
 
-        Ok(Self { root, lll, lllinclude, lllignore, files, commits, head })
+        Ok(Self { root, lll, lllinclude, lllignore, files, commits, tags, head })
     }
 }
