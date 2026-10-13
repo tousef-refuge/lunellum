@@ -20,6 +20,9 @@ pub enum Command {
     
     /// Show the status of the current branch
     Status(StatusArgs),
+    
+    /// Attach a tag to a given commit
+    Tag(TagArgs),
 
     /// View the file structure of a specific commit
     View(ViewArgs),

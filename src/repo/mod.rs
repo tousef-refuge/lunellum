@@ -6,6 +6,7 @@ pub mod util;
 pub mod view;
 pub mod reset;
 pub mod details;
+pub mod tag;
 
 use anyhow::{bail, Result};
 use std::path::{Path, PathBuf};

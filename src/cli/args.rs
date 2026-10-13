@@ -44,6 +44,12 @@ pub struct ResetArgs {
 pub struct StatusArgs {}
 
 #[derive(Args)]
+pub struct TagArgs {
+    /// Hash of the given commit
+    pub hash: String,
+}
+
+#[derive(Args)]
 pub struct ViewArgs {
     /// Hash of the given commit
     pub hash: String,

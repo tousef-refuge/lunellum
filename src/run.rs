@@ -13,6 +13,7 @@ pub fn run_command(command: Command) -> Result<()> {
         Command::Log(args) => repo.log(args),
         Command::Reset(args) => repo.reset(args),
         Command::Status(args) => repo.status(args),
+        Command::Tag(args) => repo.tag(args),
         Command::View(args) => repo.view(args),
         
         Command::Update => update_bin(),
