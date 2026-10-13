@@ -9,12 +9,18 @@ use crate::crypto::is_binary;
 use crate::objects::file_edit::FileEdit;
 use crate::paths::display_path;
 use super::Repo;
+use super::tag::tag_str;
 
 impl Repo {
     pub fn details(&self, args: DetailsArgs) -> Result<()> {
         self.check_lll()?;
         let current = self.get_commit_from_hash(&args.hash)?;
         println!("{} {} [{}]", "All changes in:".blue().bold(), current.info.bold(), &current.hash[..20]);
+
+        match self.get_tags().get(&current.hash) {
+            Some(tag) => println!("{} {}", "Tag:".blue().bold(), tag_str(tag).green().bold()),
+            None => println!("{}", "This commit has no tag attached".blue().bold()),
+        }
 
         let new_files = self.build_files(&current);
         let mut old_files = new_files.clone();
