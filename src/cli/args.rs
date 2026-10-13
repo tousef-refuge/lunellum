@@ -6,7 +6,10 @@ pub struct CommitArgs {
     // my muscle memory keeps getting fried lmao
     /// Information about the commited changes
     #[arg(short = 'm', long = "message")]
-    pub info: String,
+    pub message: Option<String>,
+
+    /// Positional message if -m is omitted
+    pub info: Option<String>,
 }
 
 #[derive(Args)]
@@ -14,7 +17,7 @@ pub struct DetailsArgs {
     /// Hash of the given commit
     #[arg(default_value = "HEAD-0")]
     pub hash: String,
-    
+
     /// Print data exactly as it is in the file
     #[arg(short = 'm', long = "raw")]
     pub raw: bool,

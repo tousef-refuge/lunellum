@@ -67,7 +67,8 @@ impl Repo {
             .collect();
 
         // wait hold on why did timestamp not need clone???
-        let commit = Commit { info: args.info, hash: hash.clone(), timestamp, changes };
+        let info = args.message.or(args.info).unwrap_or_else(|| String::new());
+        let commit = Commit { info, hash: hash.clone(), timestamp, changes };
         fs::write(&self.commits.join(hash), commit.serialize()?)?;
         fs::write(&self.head, timestamp.to_string())?;
         println!("{} {}", "Committed:".bold().green(), commit.info);
