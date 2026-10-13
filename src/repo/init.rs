@@ -5,6 +5,9 @@ use crate::cli::args::InitArgs;
 use crate::paths::display_path;
 use super::Repo;
 
+const LLLINCLUDE: &str = "*.txt\n*.md";
+const LLLIGNORE: &str = ".lllignore";
+
 #[allow(unused_variables)]
 impl Repo {
     pub fn init(&self, args: InitArgs) -> Result<()> {
@@ -12,8 +15,8 @@ impl Repo {
             bail!("A repository already exists on {}", display_path(&self.root));
         }
 
-        fs::write(&self.lllinclude, "*.txt")?;
-        fs::write(&self.lllignore, ".lllignore")?;
+        fs::write(&self.lllinclude, LLLINCLUDE)?;
+        fs::write(&self.lllignore, LLLIGNORE)?;
 
         fs::create_dir_all(&self.lll)?;
         fs::create_dir_all(&self.files)?;
