@@ -27,6 +27,13 @@ impl Repo {
     }
 
     pub fn get_commit_from_hash(&self, hash: &str) -> Result<Commit> {
+        let tags = self.get_tags();
+        let hash = tags
+            .iter()
+            .find(|(_, tag_name)| tag_name.as_str() == hash)
+            .map(|(commit_hash, _)| commit_hash.as_str())
+            .unwrap_or(hash);
+
         let commits : Vec<Commit> = self.get_commits()?.into_values().collect();
         if commits.is_empty() {
             println!("{}", "No commits exist on this repository yet".blue().bold());
