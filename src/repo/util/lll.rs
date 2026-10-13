@@ -1,11 +1,12 @@
+use anyhow::{bail, Result};
+use std::collections::HashMap;
 use std::fs;
-use anyhow::bail;
 
 use crate::paths::display_path;
 use super::Repo;
 
 impl Repo {
-    pub fn check_lll(&self) -> anyhow::Result<()> {
+    pub fn check_lll(&self) -> Result<()> {
         if !self.lll.exists() {
             bail!("There is no repository on {}. Run `lll init` to make one", display_path(&self.root));
         }
@@ -14,7 +15,7 @@ impl Repo {
 
     // checks if the head is on the latest commit
     // might kill this later if branches are real
-    pub fn check_head(&self) -> anyhow::Result<()> {
+    pub fn check_head(&self) -> Result<()> {
         let commits = self.get_commits()?;
         if !commits.is_empty() {
             let latest = commits.values()
@@ -34,5 +35,16 @@ impl Repo {
             .ok()
             .and_then(|s| s.trim().parse::<u128>().ok())
             .unwrap_or(0)
+    }
+
+    pub fn get_tags(&self) -> HashMap<String, String> {
+        let mut tags = HashMap::new();
+        for entry in fs::read_dir(&self.tags).unwrap() {
+            let tag = entry.unwrap().path();
+            let name = fs::read_to_string(&tag).unwrap().trim().to_string();
+            let hash = tag.file_name().unwrap().to_str().unwrap().to_string();
+            tags.insert(hash, name);
+        };
+        tags
     }
 }
