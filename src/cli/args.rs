@@ -46,7 +46,12 @@ pub struct StatusArgs {}
 #[derive(Args)]
 pub struct TagArgs {
     /// Hash of the given commit
+    #[arg(default_value = "HEAD-0")]
     pub hash: String,
+
+    /// Name of the tag
+    #[arg(short = 'n', long = "name")]
+    pub name: String,
 }
 
 #[derive(Args)]
