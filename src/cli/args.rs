@@ -56,6 +56,10 @@ pub struct TagArgs {
     /// Forcefully add a new tag if another tag already exists
     #[arg(short = 'f', long = "force")]
     pub force: bool,
+
+    /// Delete the tag attached to the commit if it exists
+    #[arg(short = 'd', long = "delete")]
+    pub delete: bool,
 }
 
 #[derive(Args)]

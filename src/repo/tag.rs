@@ -9,6 +9,14 @@ impl Repo {
     pub fn tag(&self, args: TagArgs) -> Result<()> {
         self.check_lll()?;
 
+        if args.delete {
+            self.delete_tag(args)
+        } else {
+            self.add_tag(args)
+        }
+    }
+
+    fn add_tag(&self, args: TagArgs) -> Result<()> {
         let mut old_tag = "".to_string();
         let mut tag_replaced = false;
 
@@ -51,6 +59,27 @@ impl Repo {
             );
         }
 
+        Ok(())
+    }
+
+    fn delete_tag(&self, args: TagArgs) -> Result<()> {
+        let current = self.get_commit_from_hash(&args.hash)?;
+        for entry in fs::read_dir(&self.tags)? {
+            let tag = entry?.path();
+            if current.hash == tag.file_name().unwrap().to_string_lossy() {
+                let name = fs::read_to_string(&tag)?;
+                fs::remove_file(&tag)?;
+                println!(
+                    "{} {} {}",
+                    "The tag".blue().bold(),
+                    tag_str(&name).green().bold(),
+                    "has been deleted".blue().bold()
+                );
+                return Ok(())
+            }
+        }
+
+        println!("{}", "This commit does not have a tag".blue().bold());
         Ok(())
     }
 }
