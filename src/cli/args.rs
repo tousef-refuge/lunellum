@@ -22,6 +22,10 @@ pub struct DetailsArgs {
     /// Print data exactly as it is in the file
     #[arg(short = 'm', long = "raw")]
     pub raw: bool,
+
+    /// Print data without color-coding changes
+    #[arg(long = "no-color")]
+    pub no_color: bool,
 }
 
 #[derive(Args)]

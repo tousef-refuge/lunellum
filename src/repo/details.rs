@@ -62,6 +62,9 @@ impl Repo {
 
             println!("\n{} {} :", "*".bold(), display_path(&path).bold());
 
+            // println!("{}", "BEFORE:".blue().bold()); repeats a lot and i can
+            // technically put that at the beginning of this if statement
+            // daga kotowaru
             if old_exists && new_exists {
                 let old_text = String::from_utf8_lossy(&old_data);
                 let new_text = String::from_utf8_lossy(&new_data);
@@ -82,6 +85,14 @@ impl Repo {
                     print_text(&old_text);
                     println!("{}", "\nAFTER:".blue().bold());
                     print_text(&new_text);
+                    continue
+                }
+
+                if args.no_color {
+                    println!("{}", "BEFORE:".blue().bold());
+                    println!("{}", old_text);
+                    println!("{}", "\nAFTER:".blue().bold());
+                    println!("{}", new_text);
                     continue
                 }
 
