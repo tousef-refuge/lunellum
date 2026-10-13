@@ -17,6 +17,7 @@ impl Repo {
     }
 
     fn add_tag(&self, args: TagArgs) -> Result<()> {
+        let name = args.name.unwrap_or(String::new());
         let mut old_tag = "".to_string();
         let mut tag_replaced = false;
 
@@ -40,11 +41,11 @@ impl Repo {
             }
         }
 
-        fs::write(&self.tags.join(&current.hash), &args.name)?;
+        fs::write(&self.tags.join(&current.hash), &name)?;
         println!(
             "{} {} {} {} [{}] ",
             "Added the tag".blue().bold(),
-            tag_str(&args.name).green().bold(),
+            tag_str(&name).green().bold(),
             "to".blue().bold(),
             current.info.bold(),
             &current.hash[..20]

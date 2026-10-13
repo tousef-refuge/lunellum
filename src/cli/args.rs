@@ -51,7 +51,7 @@ pub struct TagArgs {
 
     /// Name of the tag
     #[arg(short = 'n', long = "name")]
-    pub name: String,
+    pub name: Option<String>,
 
     /// Forcefully add a new tag if another tag already exists
     #[arg(short = 'f', long = "force")]
