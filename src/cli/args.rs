@@ -50,11 +50,11 @@ pub struct TagArgs {
     pub hash: String,
 
     /// Name of the tag
-    #[arg(short = 'n', long = "name")]
+    #[arg(short = 'n', long = "name", conflicts_with = "delete")]
     pub name: Option<String>,
 
     /// Forcefully add a new tag if another tag already exists
-    #[arg(short = 'f', long = "force")]
+    #[arg(short = 'f', long = "force", conflicts_with = "delete")]
     pub force: bool,
 
     /// Delete the tag attached to the commit if it exists
