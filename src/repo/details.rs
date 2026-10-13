@@ -1,5 +1,6 @@
 use anyhow::Result;
 use colored::Colorize;
+use similar::{ChangeTag, TextDiff};
 use std::path::PathBuf;
 use termimad::print_text;
 
@@ -10,7 +11,6 @@ use crate::paths::display_path;
 use super::Repo;
 
 impl Repo {
-    //noinspection DuplicatedCode
     pub fn details(&self, args: DetailsArgs) -> Result<()> {
         self.check_lll()?;
         let current = self.get_commit_from_hash(&args.hash)?;
@@ -62,6 +62,66 @@ impl Repo {
 
             println!("\n{} {} :", "*".bold(), display_path(&path).bold());
 
+            if old_exists && new_exists {
+                let old_text = String::from_utf8_lossy(&old_data);
+                let new_text = String::from_utf8_lossy(&new_data);
+
+                let is_binary = is_binary(&old_data) || is_binary(&new_data);
+                let is_md = path.extension().unwrap_or_default() == "md";
+
+                if is_binary {
+                    println!("{}", "BEFORE:".blue().bold());
+                    println!("{}", if args.raw { old_text.white() } else { "Binary file".yellow() });
+                    println!("{}", "\nAFTER:".blue().bold());
+                    println!("{}", if args.raw { new_text.white() } else { "Binary file".yellow() });
+                    continue
+                }
+
+                if is_md && !args.raw {
+                    println!("{}", "BEFORE:".blue().bold());
+                    print_text(&old_text);
+                    println!("{}", "\nAFTER:".blue().bold());
+                    print_text(&new_text);
+                    continue
+                }
+
+                let diff = TextDiff::from_chars(&old_text, &new_text);
+
+                println!("{}", "BEFORE:".blue().bold());
+                for change in diff.iter_all_changes() {
+                    match change.tag() {
+                        ChangeTag::Equal => {
+                            print!("{}", change.value().to_string())
+                        }
+
+                        ChangeTag::Delete => {
+                            print!("{}", change.value().to_string().red())
+                        }
+
+                        ChangeTag::Insert => {}
+                    }
+                }
+
+                // double \n cause similar crate is WEIRD bro
+                println!("{}", "\n\nAFTER:".blue().bold());
+                for change in diff.iter_all_changes() {
+                    match change.tag() {
+                        ChangeTag::Equal => {
+                            print!("{}", change.value().to_string())
+                        }
+
+                        ChangeTag::Insert => {
+                            print!("{}", change.value().to_string().green())
+                        }
+
+                        ChangeTag::Delete => {}
+                    }
+                }
+
+                println!();
+                continue
+            }
+
             if old_exists {
                 println!("{}", "BEFORE:".blue().bold());
                 print_data(&old_data, &path, &args);
@@ -84,16 +144,17 @@ impl Repo {
 }
 
 fn print_data(data: &[u8], path: &PathBuf, args: &DetailsArgs) {
+    let text = String::from_utf8_lossy(data);
     if args.raw {
-        println!("{}", String::from_utf8_lossy(data).to_string());
+        println!("{}", text);
         return;
     }
 
     if is_binary(data) {
         println!("{}", "Binary file".yellow());
-    } else if path.extension().unwrap() == "md" {
-        print_text(&String::from_utf8_lossy(data));
+    } else if path.extension().unwrap_or_default() == "md" {
+        print_text(&text);
     } else {
-        println!("{}", String::from_utf8_lossy(data));
+        println!("{}", text);
     }
 }
