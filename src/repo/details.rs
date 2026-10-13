@@ -1,6 +1,7 @@
 use anyhow::Result;
 use colored::Colorize;
 use std::path::PathBuf;
+use termimad::print_text;
 
 use crate::cli::args::DetailsArgs;
 use crate::crypto::is_binary;
@@ -63,7 +64,7 @@ impl Repo {
 
             if old_exists {
                 println!("{}", "BEFORE:".blue().bold());
-                print_data(&old_data, &args);
+                print_data(&old_data, &path, &args);
             } else {
                 println!("{}", "BEFORE:".blue().bold());
                 println!("{}", "File does not exist yet".yellow());
@@ -71,7 +72,7 @@ impl Repo {
 
             if new_exists {
                 println!("{}", "\nAFTER:".blue().bold());
-                print_data(&new_data, &args);
+                print_data(&new_data, &path, &args);
             } else {
                 println!("{}", "\nAFTER:".blue().bold());
                 println!("{}", "File does not exist anymore".yellow());
@@ -82,7 +83,7 @@ impl Repo {
     }
 }
 
-fn print_data(data: &[u8], args: &DetailsArgs) {
+fn print_data(data: &[u8], path: &PathBuf, args: &DetailsArgs) {
     if args.raw {
         println!("{}", String::from_utf8_lossy(data).to_string());
         return;
@@ -90,7 +91,9 @@ fn print_data(data: &[u8], args: &DetailsArgs) {
 
     if is_binary(data) {
         println!("{}", "Binary file".yellow());
+    } else if path.extension().unwrap() == "md" {
+        print_text(&String::from_utf8_lossy(data));
     } else {
-        println!("{}", String::from_utf8_lossy(data).to_string());
+        println!("{}", String::from_utf8_lossy(data));
     }
 }
