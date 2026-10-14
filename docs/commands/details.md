@@ -3,6 +3,9 @@ commit has, including new files, deleted files, and changes made to
 already existing files. For most files, it gives the state of the file
 before the change, and the state of the file after the change.
 
+Before showing file details, the first thing that gets printed is the
+commit message, hash, and its tag if available.
+
 When showing details, for each file, changes will be color-coded in
 the old and new data (red for deleted data, green for added data).
 To stop this, you can run the command with the ```--no-color``` flag.
@@ -18,6 +21,8 @@ Binary files such as images will not have their actual data displayed
 Markdown files (*.md) will be rendered correctly. However, despite
 being plain text, they will not display color-coded changes unless
 the command is called with the ```--raw``` flag.
+
+If ```<hash>``` is not given, it defaults to choosing the current commit.
 
 For a more detailed guide on how ```<hash>``` can be written, go to 
 docs/commands/log.md

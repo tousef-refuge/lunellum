@@ -1,7 +1,7 @@
 ```lll log``` prints a list of all currently stored commits and their
 hashes. For each commit, it stores information in the following format:
 
-``` [hash] <exact date and time of the commit> : <commit message>```
+``` [hash] <exact date and time of the commit> : <commit message> <tag if available>```
 
 The commit you are currently on is marked by a blue asterisk at the beginning
 of the line. The hashes are very important as a lot of other commands
@@ -18,5 +18,9 @@ ahead (or behind if negative) of the current commit being viewed.
 Alternatively, ```HEAD~0``` simply returns the current commit.
 
 Replacing ```<hash>``` with ```LATEST``` will return the latest commit.
+
+Replacing ```<hash>``` with the name of a tag in quotation marks will return
+a commit with the given tag. If two commits have the same tag however,
+it will choose an arbitrary commit.
 
 This command will not work if there are no commits.
