@@ -11,6 +11,15 @@ people with little to no programming experience. It stores changes made to your 
 in files of your choice, and allows for easy viewing access between changes. Besides
 writing you can use this app for taking notes or even as a side-grade for Git.
 
+There are two major things that makes Lunellum different from other traditional version
+control systems like Git; one of them being the lack of a staging area. The app knows
+what files to add automatically via .lllinclude and .lllignore files so that you
+don't have to worry about adding files to the staging area, and can do commits directly.
+The second and much more important change is that changes are displayed character-wise
+instead of line-wise (as of v1.1.0). These two changes in combination is what makes
+Lunellum so good for writers, as the simplicity makes it easy to get used to, and the
+changed display to commit details makes it much easier to track changes between drafts.
+
 You can learn how to use this app in detail by reading the files in docs/, but do
 keep in mind new versions may break old .lll files, so always make a backup when
 possible. Also, some features may or may not work properly so if you encounter any 
