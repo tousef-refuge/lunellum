@@ -9,7 +9,7 @@ systems that need you to manually add files for staging, Lunellum allows you
 to skip that step and automatically adds any files for you, as long as they
 have a pattern available in .lllinclude
 
-When initializing a repository, they always start by containing ```*.txt```, 
-meaning the repository currently only tracks .txt files, and will ignore 
-everything else in MOST operations. The operations that don't get covered by
-this file can be covered via .lllignore
+When initializing a repository, they always start by containing ```*.txt```
+and ```*.md```, meaning the repository currently only tracks .txt and .md files, 
+and will ignore everything else in MOST operations. The operations that don't
+get covered by this file can be covered via .lllignore
