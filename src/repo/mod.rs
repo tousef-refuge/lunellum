@@ -7,6 +7,7 @@ pub mod view;
 pub mod reset;
 pub mod details;
 pub mod tag;
+pub mod reword;
 
 use anyhow::{bail, Result};
 use std::path::{Path, PathBuf};

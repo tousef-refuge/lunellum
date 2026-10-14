@@ -41,6 +41,17 @@ pub struct ResetArgs {
 }
 
 #[derive(Args)]
+pub struct RewordArgs {
+    /// Hash of the given commit
+    #[arg(default_value = "HEAD-0")]
+    pub hash: String,
+
+    /// New message for the commit
+    #[arg(short = 'm', long = "message")]
+    pub message: String,
+}
+
+#[derive(Args)]
 pub struct StatusArgs {}
 
 #[derive(Args)]

@@ -17,6 +17,9 @@ pub enum Command {
     
     /// Reset the repository back to a given commit
     Reset(ResetArgs),
+
+    /// Changes the message of a given commit
+    Reword(RewordArgs),
     
     /// Show the status of the current branch
     Status(StatusArgs),
