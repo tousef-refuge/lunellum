@@ -21,6 +21,7 @@ impl Repo {
         fs::create_dir_all(&self.lll)?;
         fs::create_dir_all(&self.files)?;
         fs::create_dir_all(&self.commits)?;
+        fs::create_dir_all(&self.tags)?;
         let head = fs::File::create(&self.head)?;
 
         println!("Created new repository on {}", display_path(&self.root));
