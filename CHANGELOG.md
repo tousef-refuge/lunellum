@@ -26,3 +26,14 @@ All notable changes will be documented on this file.
 - A link to the repository's docs folder is attached to the help page
 - ```lll commit``` does not require the -m flag to run
 - .lllinclude files additionally include markdown files upon initialization
+
+### v1.1.1 (November 23rd 2026)
+
+**Changed:**
+
+- ```lll log``` no longer throws an error when called on an empty repository
+- The directory which stores tags in the .lll/ is now properly initialized
+- The .lll continuously regenerates its directories if it detects one that
+  is missing (though currently, it may still run into errors when processing
+  corrupted .lll/ folders, such as tags that don't point to any commit)
+- Removed a repeated line in the output of ```lll update```
