@@ -10,6 +10,16 @@ impl Repo {
         if !self.lll.exists() {
             bail!("There is no repository on {}. Run `lll init` to make one", display_path(&self.root));
         }
+        self.create_lll()?;
+        Ok(())
+    }
+
+    pub fn create_lll(&self) -> Result<()> {
+        fs::create_dir_all(&self.lll)?;
+        fs::create_dir_all(&self.files)?;
+        fs::create_dir_all(&self.commits)?;
+        fs::create_dir_all(&self.tags)?;
+        if !self.head.exists() { fs::File::create(&self.head)?; }
         Ok(())
     }
 
