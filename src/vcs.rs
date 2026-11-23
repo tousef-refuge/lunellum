@@ -18,6 +18,5 @@ pub fn update_bin() -> Result<()> {
         .update()?;
 
     if status.is_updated() { println!("Updated to version {}", status.version().green()); }
-    else { println!("Already up to date"); }
     Ok(())
 }
