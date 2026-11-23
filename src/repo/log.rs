@@ -17,6 +17,7 @@ impl Repo {
         commits.sort_by_key(|commit| Reverse(commit.timestamp));
         if commits.is_empty() {
             println!("{}", "No commits exist on this repository yet".blue().bold());
+            std::process::exit(0);
         }
         let tags = self.get_tags();
 
