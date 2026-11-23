@@ -17,13 +17,7 @@ impl Repo {
 
         fs::write(&self.lllinclude, LLLINCLUDE)?;
         fs::write(&self.lllignore, LLLIGNORE)?;
-
-        fs::create_dir_all(&self.lll)?;
-        fs::create_dir_all(&self.files)?;
-        fs::create_dir_all(&self.commits)?;
-        fs::create_dir_all(&self.tags)?;
-        let head = fs::File::create(&self.head)?;
-
+        self.create_lll()?;
         println!("Created new repository on {}", display_path(&self.root));
         Ok(())
     }
